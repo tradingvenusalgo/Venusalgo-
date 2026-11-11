@@ -1,0 +1,2 @@
+# Venusalgo-
+TradingView indicator
