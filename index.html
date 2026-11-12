@@ -4,19 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>VenusAlgo</title>
+<script>document.documentElement.classList.add('js');</script>
+<meta property="og:title" content="VenusAlgo - TradingView SMC indicator">
+<meta property="og:description" content="Market structure, order blocks, volume and momentum scored together, with a ready Entry, SL and TP. Pay in crypto.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#07030f">
 <meta name="description" content="VenusAlgo is a TradingView indicator that combines market structure, order blocks, volume profile, order flow and classic indicators into one confluence score with a ready entry, stop loss and take-profit plan.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <style>
 /* Layout: neon-violet landing page. Single dark look by design: glowing gradients, grid backdrop, hero text beside a chart illustration, inventory columns, scoring rules, checkout. */
 :root{
   --bg:#07030f; --surface:#0f0820; --line:#2f1a5c; --fg:#f4eeff; --mute:#b3a4dd;
   --accent:#b86bff; --accent2:#ff4fd8; --accent-ink:#0a0416; --bull:#2ff5c4; --bear:#ff4f86; --warn:#ffd66b;
-  --glow:rgba(184,107,255,.55); --glow2:rgba(255,79,216,.45);
+  --glow:rgba(184,107,255,.55); --glow2:rgba(255,79,216,.45); --rgb1:184,107,255; --rgb2:255,79,216; --rgb3:120,70,255; --gridA:.07;
   --f-display:'Bricolage Grotesque',system-ui,sans-serif;
   --f-body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
   --f-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -26,11 +29,11 @@
 html{scroll-behavior:smooth}
 body{background-color:var(--bg);
   background-image:
-    radial-gradient(900px 520px at 85% -8%, rgba(184,107,255,.30), transparent 60%),
-    radial-gradient(700px 480px at -6% 22%, rgba(255,79,216,.16), transparent 60%),
-    radial-gradient(800px 500px at 60% 78%, rgba(120,70,255,.16), transparent 60%),
-    linear-gradient(rgba(184,107,255,.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(184,107,255,.07) 1px, transparent 1px);
+    radial-gradient(900px 520px at 85% -8%, rgba(var(--rgb1),.30), transparent 60%),
+    radial-gradient(700px 480px at -6% 22%, rgba(var(--rgb2),.16), transparent 60%),
+    radial-gradient(800px 500px at 60% 78%, rgba(var(--rgb3),.16), transparent 60%),
+    linear-gradient(rgba(var(--rgb1),var(--gridA)) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--rgb1),var(--gridA)) 1px, transparent 1px);
   background-size:auto,auto,auto,44px 44px,44px 44px;
   background-attachment:scroll;
   color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -254,9 +257,111 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
   @keyframes pulse{0%,100%{box-shadow:0 0 0 1px rgba(255,255,255,.12) inset,0 0 22px var(--glow),0 0 52px rgba(255,79,216,.25)}50%{box-shadow:0 0 0 1px rgba(255,255,255,.2) inset,0 0 34px var(--glow),0 0 80px rgba(255,79,216,.45)}}
 }
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+
+.set-fab{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:900;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--fg);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 18px var(--glow)}
+.set-fab svg{width:21px;height:21px}
+.member-badge{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 56px);z-index:900;background:var(--surface);border:1px solid var(--accent);color:var(--fg);border-radius:999px;padding:6px 12px;font:600 13px var(--f-mono);box-shadow:0 0 14px var(--glow)}
+.member-badge b{color:var(--accent)}
+.set-panel{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 58px);z-index:950;width:min(380px,calc(100vw - 32px));max-height:min(78vh,640px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 0 40px var(--glow)}
+.set-body{padding:6px 16px 16px;display:grid;gap:10px}
+.set-body h4{margin:10px 0 0;font:700 13px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.themes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.themes button{border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:12px;padding:8px 6px;font:500 12px var(--f-body);display:grid;gap:6px;justify-items:center}
+.themes button i{display:block;width:100%;height:22px;border-radius:7px}
+.themes button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 12px var(--glow)}
+.set-row{display:flex;gap:10px;align-items:center;font-size:14px}
+.set-note{font-size:13px;color:var(--mute)}
+.dev-form{display:flex;gap:8px}.dev-form input{flex:1;min-width:0;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit}
+.dev-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dev-stats div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px;display:grid}
+.dev-stats b{font:700 26px var(--f-display);color:var(--accent)}.dev-stats span{font-size:12px;color:var(--mute)}
+.dev-list{display:grid;gap:6px;max-height:180px;overflow:auto}
+.dev-list div{font:12px var(--f-mono);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;overflow-wrap:anywhere}
+.dev-actions{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ===== v3 look: aurora, glass cards, sticky header, reveal ===== */
+section{scroll-margin-top:84px}
+header.top{position:sticky;top:0;z-index:850;background:color-mix(in srgb,var(--bg) 78%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(var(--rgb1),.25);border-radius:0 0 18px 18px;padding-block:14px}
+.aurora{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.aurora i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.30;animation:drift 24s ease-in-out infinite alternate}
+.aurora i:nth-child(1){width:46vw;height:46vw;left:-10vw;top:8vh;background:rgb(var(--rgb1))}
+.aurora i:nth-child(2){width:40vw;height:40vw;right:-8vw;top:40vh;background:rgb(var(--rgb2));animation-duration:30s;animation-delay:-8s}
+.aurora i:nth-child(3){width:34vw;height:34vw;left:30vw;bottom:-10vh;background:rgb(var(--rgb3));animation-duration:27s;animation-delay:-14s}
+@keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(6vw,-5vh,0) scale(1.18)}}
+html.js .rv{opacity:0;transform:translateY(24px);transition:opacity .75s cubic-bezier(.2,.7,.2,1),transform .75s cubic-bezier(.2,.7,.2,1)}
+html.js .rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){html.js .rv{opacity:1;transform:none;transition:none}.aurora i,.marq-track,.chartbox{animation:none!important}}
+.chartbox{animation:floaty 7s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.hero h1 em{background-size:200% 100%;animation:shine 6s linear infinite}
+@keyframes shine{to{background-position:200% 0}}
+.announce{position:relative;z-index:860;text-align:center;padding:9px 40px 9px 16px;font-size:14px;font-weight:600;color:var(--accent-ink);background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.announce button{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:inherit;font-size:22px;line-height:1;cursor:pointer}
+.marq{overflow:hidden;border-block:1px solid rgba(var(--rgb1),.25);background:rgba(var(--rgb1),.05);padding-block:14px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.marq-track{display:flex;gap:34px;width:max-content;animation:marq 38s linear infinite;font:500 13px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.marq-track span::before{content:"\25C6";color:var(--accent);margin-right:12px}
+@keyframes marq{to{transform:translateX(-50%)}}
+.glass{background:linear-gradient(180deg,rgba(var(--rgb1),.12),rgba(var(--rgb1),.03));border:1px solid rgba(var(--rgb1),.35);border-radius:18px;padding:22px;transition:transform .25s,box-shadow .25s,border-color .25s;min-width:0}
+.glass:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 12px 40px -12px var(--glow)}
+.steps3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.steps3 .glass b.n{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--accent-ink);font:700 16px var(--f-mono);box-shadow:0 0 20px var(--glow)}
+.steps3 h3{font-size:20px;margin:14px 0 6px}
+.steps3 p{color:var(--mute);font-size:15px}
+.promise{margin-top:22px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--mute);font-size:14px}
+.promise b{color:var(--fg)}
+.tbl-wrap{overflow-x:auto;border:1px solid rgba(var(--rgb1),.35);border-radius:18px;background:linear-gradient(180deg,rgba(var(--rgb1),.08),rgba(var(--rgb1),.02))}
+table.cmp{border-collapse:collapse;width:100%;min-width:560px;font-size:15px}
+.cmp th,.cmp td{padding:13px 16px;text-align:center;border-bottom:1px solid rgba(var(--rgb1),.2)}
+.cmp th:first-child,.cmp td:first-child{text-align:left;color:var(--fg)}
+.cmp thead th{font:700 13px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.cmp thead th.hl,.cmp td.hl{background:rgba(var(--rgb1),.12);color:var(--fg)}
+.cmp tr:last-child td{border-bottom:0}
+.yes{color:var(--bull);font-weight:700}.no{color:var(--mute);opacity:.6}
+.acc{display:grid;gap:10px;max-width:860px}
+details.q{border:1px solid rgba(var(--rgb1),.35);border-radius:14px;background:rgba(var(--rgb1),.05);padding:0 18px;transition:border-color .2s,background .2s}
+details.q[open]{border-color:var(--accent);background:rgba(var(--rgb1),.10)}
+details.q summary{cursor:pointer;list-style:none;padding:16px 28px 16px 0;font-weight:600;position:relative}
+details.q summary::-webkit-details-marker{display:none}
+details.q summary::after{content:"+";position:absolute;right:0;top:50%;transform:translateY(-50%);color:var(--accent);font:400 24px var(--f-mono)}
+details.q[open] summary::after{content:"\2212"}
+details.q .ans{padding:0 0 18px;color:var(--mute);font-size:15.5px;display:grid;gap:10px}
+details.q .ans b{color:var(--fg);font-weight:500}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;align-items:start}
+.video-box{aspect-ratio:16/9;max-width:860px;border-radius:18px;overflow:hidden;border:1px solid rgba(var(--rgb1),.5);box-shadow:0 0 40px var(--glow)}
+.video-box iframe{width:100%;height:100%;border:0}
+.plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:22px 0 6px}
+.plan{text-align:left;color:var(--fg);font:inherit;cursor:pointer;display:grid;gap:8px;position:relative}
+.plan[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 34px var(--glow)}
+.plan h3{font-size:22px;margin:0}
+.plan .pr{font:600 32px var(--f-display);color:var(--accent)}
+.plan .pr s{font-size:16px;color:var(--mute);margin-right:8px}
+.plan ul{margin:0;padding:0;list-style:none;display:grid;gap:6px;color:var(--mute);font-size:14.5px}
+.plan li::before{content:"\2713";color:var(--bull);margin-right:8px}
+.plan .badge{position:absolute;top:14px;right:14px;font:700 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;background:linear-gradient(90deg,var(--accent),var(--accent2));color:var(--accent-ink);padding:4px 9px;border-radius:999px}
+.coupon{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}
+.coupon input{flex:1 1 180px;min-width:0;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit;text-transform:uppercase}
+.share-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.comm{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.legal{display:grid;gap:10px;max-width:860px}
+.legal h3{font-size:18px;margin:6px 0 0}
+details.dv{border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:0 12px}
+details.dv summary{cursor:pointer;padding:11px 0;font-weight:600;font-size:14px;list-style:none}
+details.dv summary::-webkit-details-marker{display:none}
+details.dv summary::before{content:"\25B8";color:var(--accent);margin-right:8px}
+details.dv[open] summary::before{content:"\25BE"}
+.dv-body{display:grid;gap:8px;padding-bottom:12px}
+.dv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dv-body input,.dv-body select{min-width:0;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font:inherit;font-size:14px}
+.dv-body .btn{width:100%}
+@media (max-width:560px){header.top{gap:8px;padding-block:10px}.nav{gap:8px;flex-wrap:nowrap}.auth-area .who{display:none}.brand{font-size:18px}}
+@media (max-width:860px){.steps3,.two,.plans{grid-template-columns:1fr}.sec-head{grid-template-columns:1fr;gap:14px}}
+.nav a.btn,.nav a.btn:hover{color:var(--accent-ink);text-shadow:none}
+.cmp td:first-child{min-width:170px}
 </style>
 </head>
 <body>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+<div id="announce" class="announce" hidden></div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
 <linearGradient id="solg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#9945ff"/><stop offset="1" stop-color="#14f195"/></linearGradient>
 <symbol id="i-btc" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#f7931a"/><rect x="12.4" y="6.2" width="1.9" height="3.6" rx=".5" fill="#fff"/><rect x="17.2" y="6.2" width="1.9" height="3.6" rx=".5" fill="#fff"/><rect x="12.4" y="22.2" width="1.9" height="3.6" rx=".5" fill="#fff"/><rect x="17.2" y="22.2" width="1.9" height="3.6" rx=".5" fill="#fff"/><text x="16" y="22.4" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="19" fill="#fff">B</text></symbol>
@@ -275,8 +380,11 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
     <a class="hide-sm" href="#inside">What's inside</a>
     <a class="hide-sm" href="#logic">How it signals</a>
     <a id="navProof" class="hide-sm" href="#proof" hidden>Results</a>
+    <a class="hide-sm" href="#compare">Compare</a>
+    <a class="hide-sm" href="#learn">Learn</a>
+    <a class="hide-sm" href="#faq">FAQ</a>
     <span id="authArea" class="auth-area"></span>
-    <a class="btn sm" href="#buy">Buy for $20</a>
+    <a class="btn sm" href="#buy">Buy now</a>
   </nav>
 </header>
 
@@ -288,8 +396,8 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
       <h1>The whole chart, or just <em>the trade.</em></h1>
       <p class="lede">VenusAlgo reads market structure, order blocks, volume and momentum together, scores the setup out of nine, and draws a ready entry, stop loss and two take-profit levels. Switch off the detail whenever you want a clean chart.</p>
       <div class="cta-row">
-        <a class="btn" href="#buy">Buy for $20 in crypto</a>
-        <span class="price-tag"><b>$20</b> USD · pay in BTC, ETH, SOL, BNB or USDT</span>
+        <a class="btn" href="#buy">Get VenusAlgo from $20</a>
+        <span class="price-tag">from <b>$20</b> USD · pay in BTC, ETH, SOL, BNB or USDT</span>
       </div>
       <div class="accept"><span>We accept</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-btc"/></svg>BTC</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-eth"/></svg>ETH</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-sol"/></svg>SOL</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-bnb"/></svg>BNB</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-usdt"/></svg>USDT</span></div>
       <div class="facts">
@@ -310,6 +418,19 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
       <svg id="chart" class="chart" viewBox="0 0 720 380" role="img" aria-label="Illustrative candlestick chart showing the indicator layers in Full Analysis mode and a long trade plan with entry, stop loss and two take profit levels"></svg>
       <div class="legend" id="legend"></div>
       <p class="cap">Illustration of the layout drawn from generated sample candles. It is not a real trade and not a performance result.</p>
+    </div>
+  </div>
+</section>
+
+<div class="marq" aria-hidden="true"><div class="marq-track" id="marq"></div></div>
+
+<section id="how" style="padding-top:56px;padding-bottom:24px">
+  <div class="wrap">
+    <div class="sec-head rv"><div><div class="eyebrow">How buying works</div><h2>Three steps, no card needed.</h2></div><p>Pay in crypto, email your proof, receive your files. No account with a payment company, no card details.</p></div>
+    <div class="steps3">
+      <div class="glass rv"><b class="n">1</b><h3>Pick a plan and coin</h3><p>Press Purchase, choose the Indicator or the Pro bundle, then pick BTC, ETH, SOL, BNB or USDT.</p></div>
+      <div class="glass rv"><b class="n">2</b><h3>Send the payment</h3><p>Send the exact amount to the address shown, on the network shown, then email your screenshot and TXID.</p></div>
+      <div class="glass rv"><b class="n">3</b><h3>Get your files</h3><p>We check the payment on the blockchain and email your Pine Script files, usually within <b id="delHours">24</b> hours.</p></div>
     </div>
   </div>
 </section>
@@ -379,6 +500,13 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
   </div>
 </section>
 
+<section id="video" hidden>
+  <div class="wrap">
+    <div class="sec-head rv"><div><div class="eyebrow">Demo</div><h2>See it working on a live chart.</h2></div><p>A walkthrough of the two display modes and how a signal is drawn.</p></div>
+    <div class="video-box rv" id="videoBox"></div>
+  </div>
+</section>
+
 <section id="logic" style="padding-top:24px">
   <div class="wrap">
     <div class="sec-head">
@@ -411,13 +539,77 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
   </div>
 </section>
 
+<section id="compare">
+  <div class="wrap">
+    <div class="sec-head rv"><div><div class="eyebrow">Compare</div><h2>What you get beyond a free script.</h2></div><p>A typical free script draws one or two things. VenusAlgo combines them and turns the result into a plan with an entry, stop and targets.</p></div>
+    <div class="tbl-wrap rv"><table class="cmp">
+      <thead><tr><th></th><th>Typical free script</th><th class="hl">Indicator</th><th>Pro bundle</th></tr></thead>
+      <tbody>
+        <tr><td>Market structure, BOS and CHoCH</td><td>Sometimes</td><td class="hl yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+        <tr><td>Order blocks, FVG, liquidity sweeps</td><td>Rarely together</td><td class="hl yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+        <tr><td>9-point confluence score</td><td class="no">&mdash;</td><td class="hl yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+        <tr><td>Automatic Entry, SL and TP</td><td class="no">&mdash;</td><td class="hl yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+        <tr><td>Full / Entry-SL-TP-only display modes</td><td class="no">&mdash;</td><td class="hl yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+        <tr><td>Backtestable strategy with partial exits</td><td class="no">&mdash;</td><td class="hl no">&mdash;</td><td class="yes">&#10003;</td></tr>
+        <tr><td>Higher-timeframe confirmation</td><td class="no">&mdash;</td><td class="hl no">&mdash;</td><td class="yes">&#10003;</td></tr>
+        <tr><td>Early-exit warnings</td><td class="no">&mdash;</td><td class="hl no">&mdash;</td><td class="yes">&#10003;</td></tr>
+        <tr><td>Venus Momentum companion indicator</td><td class="no">&mdash;</td><td class="hl no">&mdash;</td><td class="yes">&#10003;</td></tr>
+      </tbody></table></div>
+  </div>
+</section>
+
+<section id="setup">
+  <div class="wrap">
+    <div class="sec-head rv"><div><div class="eyebrow">Setup guide</div><h2>On your chart in about two minutes.</h2></div><p>You receive plain text Pine Script files. They work in TradingView on web, desktop and the phone app (editing code is easiest on a computer or tablet).</p></div>
+    <div class="acc">
+      <details class="q rv" open><summary>1. Add the indicator</summary><div class="ans"><p>Open a chart on TradingView, open the <b>Pine Editor</b> tab at the bottom, delete the sample code, paste the VenusAlgo file, then press <b>Save</b> and <b>Add to chart</b>.</p></div></details>
+      <details class="q rv"><summary>2. Choose a display mode</summary><div class="ans"><p>Open the indicator settings (the gear). <b>Display Mode</b> switches between Full Analysis and Entry / SL / TP Only. Every layer also has its own switch.</p></div></details>
+      <details class="q rv"><summary>3. Recommended starting settings</summary><div class="ans"><p>Start on the <b>15 minute or 1 hour</b> chart of a liquid pair such as BTCUSD. Keep the minimum score at 6 of 9. Raise it to 7 for fewer, stronger signals. Test on the replay tool before risking money.</p></div></details>
+      <details class="q rv"><summary>4. Set alerts</summary><div class="ans"><p>Right-click the chart, choose <b>Add alert</b>, pick VenusAlgo as the condition and choose Long, Short or a structure break. Alerts fire when the candle closes.</p></div></details>
+      <details class="q rv"><summary>5. Using the strategy (Pro bundle)</summary><div class="ans"><p>Add the strategy the same way, then open the <b>Strategy Tester</b> tab to see the trade list and equity curve. Backtests use past data and do not predict future results.</p></div></details>
+    </div>
+  </div>
+</section>
+
+<section id="learn">
+  <div class="wrap">
+    <div class="sec-head rv"><div><div class="eyebrow">Learn SMC</div><h2>The ideas behind the signals.</h2></div><p>Short plain-language notes on the concepts VenusAlgo draws, so you know what you are looking at.</p></div>
+    <div class="acc">
+      <details class="q rv"><summary>What is an order block?</summary><div class="ans"><p>An order block is the last opposite candle before a strong move that breaks structure. Traders watch it as an area where large orders may have been placed, so price sometimes reacts when it returns.</p><p>VenusAlgo draws these zones and removes them once price closes through them.</p></div></details>
+      <details class="q rv"><summary>BOS vs CHoCH</summary><div class="ans"><p>A <b>break of structure (BOS)</b> is price closing beyond the last swing high or low in the direction of the trend, so the trend continues. A <b>change of character (CHoCH)</b> is the first break against the trend and is an early sign it may be turning.</p></div></details>
+      <details class="q rv"><summary>What is a liquidity sweep?</summary><div class="ans"><p>Many stop orders sit just above old highs and below old lows. A sweep is when price briefly pokes through that level and then closes back inside. It can mean those orders were taken and price may reverse.</p></div></details>
+      <details class="q rv"><summary>Fair value gaps and premium / discount</summary><div class="ans"><p>A <b>fair value gap</b> is a three-candle pattern where the first and third candles do not overlap, leaving an imbalance price may revisit. <b>Premium and discount</b> split the current range at its midpoint: buying in the lower half (discount) and selling in the upper half (premium) gives a better price.</p></div></details>
+      <details class="q rv"><summary>Why a score instead of one signal?</summary><div class="ans"><p>No single condition is reliable alone. VenusAlgo counts how many of nine conditions agree (trend, momentum, structure, volume, location) and only draws a trade when enough of them do.</p></div></details>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head rv"><div><div class="eyebrow">FAQ</div><h2>Questions before you buy.</h2></div><p>Still unsure? Ask the assistant in the corner or email us.</p></div>
+    <div class="acc">
+      <details class="q rv"><summary>How do I receive the indicator?</summary><div class="ans"><p>After you send the payment and email your proof, we confirm it on the blockchain and email the Pine Script files to the address you wrote from. Delivery is usually within 24 hours.</p></div></details>
+      <details class="q rv"><summary>Does it repaint?</summary><div class="ans"><p>Signals are built to confirm on the close of a candle, and the higher-timeframe data in the strategy is offset so it does not peek at unfinished bars. Always check any tool yourself on the replay feature.</p></div></details>
+      <details class="q rv"><summary>Does it guarantee profit?</summary><div class="ans"><p>No. It is an educational charting tool. Trading is risky and you can lose money. A losing trade is normal for every system, which is why each signal comes with a stop loss.</p></div></details>
+      <details class="q rv"><summary>Is the order flow real?</summary><div class="ans"><p>TradingView does not give scripts tick data, so buyer and seller volume is estimated from each candle. It is useful for context but is not true order book data.</p></div></details>
+      <details class="q rv"><summary>Which timeframe and markets?</summary><div class="ans"><p>The 15 minute and 1 hour charts are good places to start on liquid markets such as BTC, ETH and major forex pairs. Lower timeframes give more signals and more noise.</p></div></details>
+      <details class="q rv"><summary>Will it work on a free TradingView account?</summary><div class="ans"><p>You need a TradingView plan that lets you add custom Pine Script indicators. Check TradingView's current plan limits before you buy.</p></div></details>
+      <details class="q rv"><summary>Can I get a refund?</summary><div class="ans"><p>Crypto payments cannot be reversed, so purchases are final. If the file does not arrive or does not load, email us and we will fix it. See the terms below.</p></div></details>
+      <details class="q rv"><summary>I sent crypto on the wrong network. What now?</summary><div class="ans"><p>Email us straight away with the TXID. Funds sent to the wrong network can sometimes be recovered and sometimes not, so always check the network shown before you send.</p></div></details>
+      <details class="q rv"><summary>Can I share or resell it?</summary><div class="ans"><p>No. A licence is for one person's personal use. Sharing or reselling the files is not allowed.</p></div></details>
+    </div>
+  </div>
+</section>
+
 <section class="buy" id="buy">
   <div class="wrap">
     <div class="eyebrow">Checkout</div>
-    <h2>Get VenusAlgo for $20.</h2>
+    <h2 id="buyTitle">Get VenusAlgo.</h2>
     <p class="buy-sub">Pay in crypto. Press Purchase, then choose how you want to pay.</p>
+    <div class="plans" id="plans" role="group" aria-label="Choose a plan"></div>
+    <div class="coupon"><input id="coupon" type="text" placeholder="Referral code (optional)" autocomplete="off" aria-label="Referral code"><button class="btn ghost sm" type="button" id="couponBtn">Apply</button><span class="auth-msg" id="couponMsg" role="status"></span></div>
     <div class="purchase-bar">
-      <button class="btn big" type="button" id="purchaseBtn" aria-expanded="false" aria-controls="methods">Purchase for $20</button>
+      <button class="btn big" type="button" id="purchaseBtn" aria-expanded="false" aria-controls="methods">Purchase</button>
     </div>
 
     <div id="methods" hidden>
@@ -487,6 +679,18 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
     </div>
   </div>
 </section>
+<section id="terms">
+  <div class="wrap">
+    <div class="sec-head rv"><div><div class="eyebrow">Terms</div><h2>Terms, refunds and privacy.</h2></div><p>Plain-language rules for buying and using VenusAlgo.</p></div>
+    <div class="acc">
+      <details class="q rv"><summary>Licence and use</summary><div class="ans"><p>Your purchase gives you a personal, non-transferable licence to use the files on your own TradingView account. You may not resell, share, publish or give the files to others.</p></div></details>
+      <details class="q rv"><summary>Payments and refunds</summary><div class="ans"><p>Payment is in cryptocurrency and cannot be reversed. All sales are final once the files have been delivered. If the files do not arrive or cannot be loaded, contact us and we will resolve it.</p></div></details>
+      <details class="q rv"><summary>No financial advice</summary><div class="ans"><p>VenusAlgo is an educational charting tool. Nothing on this site is financial advice, and no result is guaranteed. Screenshots are examples and not a record of all trades. You are responsible for your own trading decisions and losses.</p></div></details>
+      <details class="q rv"><summary>Privacy</summary><div class="ans"><p>Accounts on this site are stored in your own browser on your device. We only learn your email address if you email us, for example to send payment proof. We do not sell your information.</p></div></details>
+      <details class="q rv"><summary>Contact</summary><div class="ans"><p>Email <b class="mailAddr"></b> or message <a href="https://instagram.com/venusalgo" target="_blank" rel="noopener">@venusalgo</a> on Instagram.</p></div></details>
+    </div>
+  </div>
+</section>
 </main>
 
 
@@ -494,22 +698,76 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
   <div class="gate-card">
     <div class="eyebrow">VenusAlgo</div>
     <h2 id="gateTitle">Create your free account</h2>
-    <p class="gate-sub">Sign in to continue. Your account email identifies your order and is used for support.</p>
-    <button class="gbtn" type="button" id="googleBtn"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.5-4.1 7-10.2 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 010-9.4l-7.9-6.1a24 24 0 000 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Continue with Google</button>
-    <div class="or"><span>or use email</span></div>
+    <p class="gate-sub">Register with your email, a username and a password. You stay signed in on this device, so you can come back any time.</p>
     <div class="seg tabs" role="group" aria-label="Account mode">
-      <button type="button" id="tabReg" aria-pressed="true">Register</button>
+      <button type="button" id="tabReg" aria-pressed="true">Sign up</button>
       <button type="button" id="tabLog" aria-pressed="false">Log in</button>
     </div>
     <form id="authForm" novalidate>
-      <label class="field" id="nameWrap" for="authName">Name<input id="authName" type="text" autocomplete="name"></label>
-      <label class="field" for="authEmail">Email<input id="authEmail" type="email" autocomplete="email" inputmode="email"></label>
+      <label class="field" id="emailWrap" for="authEmail">Email<input id="authEmail" type="email" autocomplete="email" inputmode="email"></label>
+      <label class="field" id="nameWrap" for="authName">Username<input id="authName" type="text" autocomplete="username" autocapitalize="none" maxlength="24"></label>
       <label class="field" for="authPass">Password (6+ characters)<input id="authPass" type="password" autocomplete="new-password"></label>
       <button class="btn" type="submit" id="authSubmit">Create account</button>
-      <button class="linkbtn" type="button" id="forgotBtn">Forgot password?</button>
     </form>
     <p class="auth-msg" id="authMsg" role="status" aria-live="polite"></p>
+    <p class="gate-sub" style="margin:8px 0 0;font-size:13px">Forgot your password? Email <span id="gateMail"></span> and we will help.</p>
     <button class="linkbtn" id="gateClose" type="button" hidden>Not now</button>
+  </div>
+</div>
+
+<button id="setFab" class="set-fab" type="button" aria-expanded="false" aria-controls="setPanel" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+<div id="memberBadge" class="member-badge" hidden>Members: <b id="memberCount">0</b></div>
+<div id="setPanel" class="set-panel" hidden role="dialog" aria-label="Settings">
+  <div class="ai-head"><div><b>Settings</b><span>Personalise this website</span></div><button type="button" id="setClose" aria-label="Close settings">&times;</button></div>
+  <div class="set-body">
+    <h4>Background theme</h4>
+    <div class="themes" id="themeList"></div>
+    <label class="set-row"><input type="checkbox" id="gridToggle" checked> Show grid lines</label>
+    <h4>Developer mode</h4>
+    <div id="devLocked">
+      <p class="set-note">Owner only. Enter the developer password.</p>
+      <form id="devForm" class="dev-form"><input id="devPass" type="password" placeholder="Developer password" autocomplete="off" aria-label="Developer password"><button class="btn sm" type="submit">Unlock</button></form>
+      <p class="auth-msg" id="devMsg" role="status"></p>
+    </div>
+    <div id="devOpen" hidden>
+      <div class="dev-stats"><div><b id="devCount">0</b><span>Accounts on this device</span></div><div><b id="devNow">-</b><span>Signed in now</span></div></div>
+      <p class="set-note">Accounts are stored in each visitor's own browser, so this number counts only accounts made on this device.</p>
+      <div id="devList" class="dev-list"></div>
+      <p class="dev-cloud set-note" id="devCloudLine"></p>
+      <details class="dv"><summary>Sales ledger</summary><div class="dv-body">
+        <div class="dv-grid"><select id="slCoin" aria-label="Coin"><option>BTC</option><option>ETH</option><option>SOL</option><option>BNB</option><option>USDT</option></select><input id="slUsd" type="number" inputmode="decimal" placeholder="USD amount" aria-label="USD amount"><input id="slWho" type="text" placeholder="Buyer email" aria-label="Buyer email"><input id="slTx" type="text" placeholder="TXID (optional)" aria-label="TXID"></div>
+        <button class="btn sm" type="button" id="slAdd">Add sale</button>
+        <div class="dev-stats"><div><b id="slTotal">$0</b><span>Revenue logged</span></div><div><b id="slN">0</b><span>Sales</span></div></div>
+        <div id="slList" class="dev-list"></div>
+        <button class="btn ghost sm" type="button" id="slCopy">Copy sales as CSV</button>
+        <p class="set-note">Saved in this browser only. Keep your own backup copy.</p>
+      </div></details>
+      <details class="dv"><summary>Crypto amount calculator</summary><div class="dv-body">
+        <p class="set-note">Type today's prices. It works out the exact amount for each coin at the base price, ready to paste into CONFIG.fixed.</p>
+        <div class="dv-grid"><input id="pcBTC" type="number" inputmode="decimal" placeholder="BTC price" aria-label="BTC price"><input id="pcETH" type="number" inputmode="decimal" placeholder="ETH price" aria-label="ETH price"><input id="pcSOL" type="number" inputmode="decimal" placeholder="SOL price" aria-label="SOL price"><input id="pcBNB" type="number" inputmode="decimal" placeholder="BNB price" aria-label="BNB price"></div>
+        <div id="pcOut" class="dev-list"></div>
+        <button class="btn ghost sm" type="button" id="pcCopy">Copy CONFIG.fixed code</button>
+      </div></details>
+      <details class="dv"><summary>Referral codes</summary><div class="dv-body">
+        <div id="cpList" class="dev-list"></div>
+        <div class="dv-grid"><input id="cpName" type="text" placeholder="NEWCODE" aria-label="Code name"><input id="cpPct" type="number" inputmode="numeric" placeholder="% off" aria-label="Percent off"></div>
+        <button class="btn ghost sm" type="button" id="cpCopy">Copy coupons code</button>
+        <p class="set-note">Paste the copied line over <b>coupons:</b> in the site's CONFIG, then re-upload the file. Codes are checked in the browser, so treat them as friendly discounts, not secrets.</p>
+      </div></details>
+      <details class="dv"><summary>Site tools</summary><div class="dv-body">
+        <label class="set-row"><input type="checkbox" id="tBypass"> Skip the sign-up screen on this device</label>
+        <input id="tAnn" type="text" placeholder="Announcement banner text" aria-label="Announcement text">
+        <div class="dv-grid"><button class="btn ghost sm" type="button" id="tAnnBtn">Preview banner</button><button class="btn ghost sm" type="button" id="tAnnClear">Remove banner</button></div>
+        <button class="btn ghost sm" type="button" id="tWallets">Check wallet addresses</button>
+        <div id="tOut" class="dev-list"></div>
+      </div></details>
+      <details class="dv"><summary>Activity on this device</summary><div class="dv-body">
+        <div id="evList" class="dev-list"></div>
+        <button class="btn ghost sm" type="button" id="evReset">Reset counters</button>
+      </div></details>
+      <div class="dev-actions"><button class="btn ghost sm" type="button" id="devCsv">Copy list</button><button class="btn ghost sm" type="button" id="devClear">Delete all accounts here</button><button class="btn ghost sm" type="button" id="devLock">Lock</button></div>
+      <p class="auth-msg" id="devMsg2" role="status"></p>
+    </div>
   </div>
 </div>
 
@@ -523,6 +781,15 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
 
 <footer>
   <div class="wrap">
+    <div class="comm" id="comm" hidden></div>
+    <div class="share-row" id="shareRow"><span class="set-note" style="align-self:center">Share VenusAlgo:</span>
+      <button class="btn ghost sm" type="button" id="shCopy">Copy link</button>
+      <button class="btn ghost sm" type="button" id="shNative" hidden>Share...</button>
+      <a class="btn ghost sm" id="shTg" target="_blank" rel="noopener" href="#">Telegram</a>
+      <a class="btn ghost sm" id="shWa" target="_blank" rel="noopener" href="#">WhatsApp</a>
+      <a class="btn ghost sm" id="shX" target="_blank" rel="noopener" href="#">X</a>
+    </div>
+    <br>
     <p><b>© VenusAlgo</b> · VenusAlgo.com · Instagram <a href="https://instagram.com/venusalgo" target="_blank" rel="noopener">@venusalgo</a></p>
     <p>VenusAlgo is an educational charting tool. It is not financial advice and does not guarantee profit. Trading leveraged or volatile assets carries a high risk of loss, and you can lose more than you expect. Past performance, including any screenshot, does not predict future results. Only trade with money you can afford to lose.</p>
     <p>Cryptocurrency payments are final and cannot be reversed. Check the network and address before you send. VenusAlgo is not affiliated with or endorsed by TradingView. TradingView is a trademark of its owner.</p>
@@ -540,7 +807,21 @@ var CONFIG = {
   // Accounts. 'site' = everyone signs in first, 'purchase' = sign in when pressing Purchase, 'off' = no sign-in.
   // Sign-in only turns on after you paste your Firebase keys below (see the setup steps).
   requireSignIn: 'site',
-  firebase: { apiKey: '', authDomain: '', projectId: '', appId: '' },
+  // Plans shown at checkout. Prices in USD. Crypto amounts scale from CONFIG.fixed (which is for priceUSD).
+  plans: [
+    { id: 'indicator', name: 'Indicator', price: 20, badge: '', items: ['VenusAlgo SMC indicator', 'Full and Entry / SL / TP modes', '9-point confluence score'] },
+    { id: 'pro', name: 'Pro bundle', price: 35, badge: 'Best value', items: ['Everything in Indicator', 'Backtestable strategy', 'Higher-timeframe checks and early exits', 'Venus Momentum companion'] }
+  ],
+  // Referral codes: CODE: percent off. Edit freely.
+  coupons: { VENUS10: 10, FRIEND5: 5 },
+  deliveryHours: 24,
+  announcement: '',                         // e.g. 'Launch week: use code VENUS10 for 10% off'
+  telegram: '',                             // e.g. 'https://t.me/yourchannel'
+  discord: '',                              // e.g. 'https://discord.gg/yourinvite'
+  demoVideo: '',                            // YouTube embed link, e.g. 'https://www.youtube.com/embed/VIDEO_ID'
+  plausibleDomain: '',                      // e.g. 'venusalgo.com' after you sign up at plausible.io (optional analytics)
+  // Optional shared member counter (all devices). See the setup note: needs a free Firebase project with Firestore.
+  cloud: { projectId: '', apiKey: '' },
   // Optional: URL of a server that answers questions with a real AI model. Leave empty to use the built-in guide.
   aiEndpoint: '',
   // Fixed amounts for $20 USD. liveRates:false shows these exact amounts.
@@ -573,6 +854,8 @@ var CONFIG = {
   }
 ]
 };
+window.VENUS_PLAN = { id: 'indicator', name: 'Indicator', base: CONFIG.plans[0].price, disc: 0, code: '' };
+function VP(){ var p = window.VENUS_PLAN; return Math.round(p.base * (1 - p.disc / 100) * 100) / 100; }
 var WALLETS = {
   BTC: { addr: 'bc1q8tpfy099la6v6tj05dhz8kkqa8twd94k755w4u', name: 'Bitcoin', dec: 8, cg: 'bitcoin', cb: 'BTC-USD',
          net: 'the Bitcoin network', warn: 'Send Bitcoin (BTC) on the Bitcoin network only.' },
@@ -745,10 +1028,13 @@ var WALLETS = {
   }
   function rateNow(){ return manual[coin] > 0 ? manual[coin] : rates[coin]; }
   function amountText(){
-    if (!CONFIG.liveRates) return CONFIG.fixed[coin].amt;
+    if (!CONFIG.liveRates) {
+      var base = parseFloat(CONFIG.fixed[coin].amt), dd = WALLETS[coin].dec, ff = Math.pow(10, dd);
+      return (Math.ceil(base * VP() / CONFIG.priceUSD * ff - 1e-9) / ff).toFixed(dd);
+    }
     var r = rateNow(); if (!(r > 0)) return null;
     var d = WALLETS[coin].dec, f = Math.pow(10, d);
-    return (Math.ceil(CONFIG.priceUSD / r * f) / f).toFixed(d);
+    return (Math.ceil(VP() / r * f) / f).toFixed(d);
   }
   function hhmm(ts){ return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
   function sym(){ return WALLETS[coin].sym || coin; }
@@ -763,12 +1049,12 @@ var WALLETS = {
     $('amount').textContent = amt ? amt + ' ' + sym() : 'Enter the rate to see the amount';
     var r = rateNow();
     $('rateLine').textContent = r > 0
-      ? ('= $' + CONFIG.priceUSD.toFixed(2) + ' USD  ·  1 ' + coin + ' = $' + r.toLocaleString(undefined, { maximumFractionDigits: 2 }) + (manual[coin] > 0 ? ' (entered by you)' : '  ·  rate from ' + hhmm(fetchedAt)))
-      : 'Price: $' + CONFIG.priceUSD.toFixed(2) + ' USD';
+      ? ('= $' + VP().toFixed(2) + ' USD  ·  1 ' + coin + ' = $' + r.toLocaleString(undefined, { maximumFractionDigits: 2 }) + (manual[coin] > 0 ? ' (entered by you)' : '  ·  rate from ' + hhmm(fetchedAt)))
+      : 'Price: $' + VP().toFixed(2) + ' USD';
     if (!CONFIG.liveRates){
       var fx = CONFIG.fixed[coin];
-      $('rateLine').textContent = '= $' + CONFIG.priceUSD.toFixed(2) + ' USD  ·  reference price 1 ' + sym() + ' = $' + fx.ref.toLocaleString();
-      $('timer').textContent = 'Fixed amount for $' + CONFIG.priceUSD.toFixed(2) + ' USD. Send this amount or more.';
+      $('rateLine').textContent = '= $' + VP().toFixed(2) + ' USD  ·  reference price 1 ' + sym() + ' = $' + fx.ref.toLocaleString();
+      $('timer').textContent = 'Fixed amount for $' + VP().toFixed(2) + ' USD. Send this amount or more.';
     }
     var wt = $('warn'); wt.innerHTML = '';
     var l1 = document.createElement('div'); l1.innerHTML = '<b>Network:</b> <span></span> Funds sent on another network can be lost.';
@@ -777,6 +1063,7 @@ var WALLETS = {
     wt.appendChild(l1); wt.appendChild(l2);
     buildQR(); buildMsg();
   }
+  window.addEventListener('venus-plan', function(){ render(); });
   function buildQR(){
     var box = $('qr'); box.innerHTML = '';
     try { new QRCode(box, { text: WALLETS[coin].addr, width: 120, height: 120, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); }
@@ -784,8 +1071,8 @@ var WALLETS = {
   }
   function buildMsg(){
     var amt = amountText();
-    var msg = 'VenusAlgo order\n' +
-      'Paid: ' + (amt ? amt + ' ' + sym() : sym()) + ' (USD ' + CONFIG.priceUSD + ')\n' +
+    var msg = 'VenusAlgo order: ' + window.VENUS_PLAN.name + (window.VENUS_PLAN.code ? ' (code ' + window.VENUS_PLAN.code + ')' : '') + '\n' +
+      'Paid: ' + (amt ? amt + ' ' + sym() : sym()) + ' (USD ' + VP() + ')\n' +
       'Network: ' + WALLETS[coin].net + '\n' +
       'TXID: ' + ($('txid').value.trim() || '(paste TXID)') + '\n' +
       'Send the indicator to: ' + ($('who').value.trim() || '(your email or Telegram)') + '\nProof of payment: screenshot of the transaction attached';
@@ -845,32 +1132,47 @@ var WALLETS = {
   });
 })();
 
-/* ===================== ACCOUNTS (Firebase Authentication) ===================== */
+/* ===================== ACCOUNTS (stored in the visitor's browser) ===================== */
 (function(){
   var $ = function(id){ return document.getElementById(id); };
-  var cfg = CONFIG.firebase || {};
-  var configured = !!(cfg.apiKey && cfg.authDomain && cfg.projectId && cfg.appId) && typeof firebase !== 'undefined';
   var mode = CONFIG.requireSignIn || 'off';
+  var KU = 'venusalgo_users_v1', KS = 'venusalgo_session_v1';
   var gate = $('authGate'), area = $('authArea');
-  var user = null, regMode = true, afterAuth = null, dismissible = false, auth = null;
+  var user = null, regMode = true, afterAuth = null, dismissible = false;
+  $('gateMail').textContent = CONFIG.contactEmail;
+
+  function bypass(){ try { return sessionStorage.getItem('venusalgo_dev') === '1' && localStorage.getItem('venusalgo_bypass') === '1'; } catch(e){ return false; } }
+  function load(){ try { return JSON.parse(localStorage.getItem(KU)) || {}; } catch(e){ return {}; } }
+  function save(u){ try { localStorage.setItem(KU, JSON.stringify(u)); return true; } catch(e){ return false; } }
+  function getSess(){ try { return localStorage.getItem(KS); } catch(e){ return null; } }
+  function setSess(v){ try { if (v) localStorage.setItem(KS, v); else localStorage.removeItem(KS); } catch(e){} }
+  function hex(buf){ return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ('0' + b.toString(16)).slice(-2); }).join(''); }
+  function rnd(){ var a = new Uint8Array(16); (window.crypto || {}).getRandomValues ? crypto.getRandomValues(a) : a.forEach(function(_, i){ a[i] = Math.floor(Math.random() * 256); }); return hex(a); }
+  function hashPw(pw, salt){
+    if (window.crypto && crypto.subtle) {
+      var enc = new TextEncoder();
+      return crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveBits']).then(function(k){
+        return crypto.subtle.deriveBits({ name: 'PBKDF2', salt: enc.encode(salt), iterations: 100000, hash: 'SHA-256' }, k, 256);
+      }).then(hex);
+    }
+    var h = 5381, t = salt + pw; for (var i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0;
+    return Promise.resolve('x' + h);
+  }
 
   window.VenusAuth = {
-    configured: configured,
-    require: function(cb){
-      if (!configured || mode === 'off' || user) { cb(); return; }
-      afterAuth = cb; showGate(true);
-    }
+    configured: true,
+    count: function(){ return Object.keys(load()).length; },
+    list: function(){ var u = load(); return Object.keys(u).map(function(k){ return u[k]; }); },
+    clear: function(){ save({}); setSess(null); user = null; renderArea(); window.dispatchEvent(new Event('venus-users')); if (mode === 'site') showGate(false); },
+    current: function(){ return user; },
+    require: function(cb){ if (mode === 'off' || user) { cb(); return; } afterAuth = cb; showGate(true); }
   };
-  if (!configured) return;
-
-  firebase.initializeApp(cfg);
-  auth = firebase.auth();
 
   function setMsg(t, good){ var m = $('authMsg'); m.textContent = t || ''; m.className = 'auth-msg' + (good ? ' ok' : ''); }
   function showGate(canClose){
     dismissible = !!canClose; $('gateClose').hidden = !dismissible;
     gate.hidden = false; document.body.style.overflow = 'hidden'; setMsg('');
-    setTimeout(function(){ try { $('googleBtn').focus(); } catch(e){} }, 60);
+    setTimeout(function(){ try { $('authEmail').focus(); } catch(e){} }, 60);
   }
   function hideGate(){ gate.hidden = true; document.body.style.overflow = ''; }
   function setTab(reg){
@@ -878,86 +1180,381 @@ var WALLETS = {
     $('tabReg').setAttribute('aria-pressed', reg ? 'true' : 'false');
     $('tabLog').setAttribute('aria-pressed', reg ? 'false' : 'true');
     $('nameWrap').hidden = !reg;
+    $('authEmail').parentNode.firstChild.nodeValue = reg ? 'Email' : 'Email or username';
+    $('authEmail').type = reg ? 'email' : 'text';
     $('authSubmit').textContent = reg ? 'Create account' : 'Log in';
     $('authPass').setAttribute('autocomplete', reg ? 'new-password' : 'current-password');
     $('gateTitle').textContent = reg ? 'Create your free account' : 'Welcome back';
     setMsg('');
   }
-  function friendly(e){
-    var c = (e && e.code) || '';
-    var map = {
-      'auth/email-already-in-use': 'This email already has an account. Use Log in instead.',
-      'auth/invalid-email': 'Enter a valid email address.',
-      'auth/weak-password': 'Use a password with at least 6 characters.',
-      'auth/user-not-found': 'Email or password is not correct.',
-      'auth/wrong-password': 'Email or password is not correct.',
-      'auth/invalid-credential': 'Email or password is not correct.',
-      'auth/invalid-login-credentials': 'Email or password is not correct.',
-      'auth/too-many-requests': 'Too many attempts. Wait a few minutes and try again.',
-      'auth/popup-closed-by-user': 'The Google window was closed. Try again.',
-      'auth/cancelled-popup-request': 'The Google window was closed. Try again.',
-      'auth/popup-blocked': 'Your browser blocked the Google window. Allow pop-ups and try again.',
-      'auth/unauthorized-domain': 'This website address is not approved for sign-in yet. The site owner must add it under Firebase, Authentication, Settings, Authorized domains.',
-      'auth/operation-not-allowed': 'This sign-in method is not turned on yet. The site owner must enable it in Firebase.',
-      'auth/network-request-failed': 'Network problem. Check your connection and try again.'
-    };
-    return map[c] || 'Something went wrong. Try again.';
-  }
   function renderArea(){
     area.innerHTML = '';
     var b = document.createElement('button'); b.type = 'button'; b.className = 'btn ghost sm';
     if (user) {
-      var s = document.createElement('span'); s.className = 'who';
-      s.textContent = (user.displayName || user.email || 'Account').split(' ')[0];
-      b.textContent = 'Sign out'; b.addEventListener('click', function(){ auth.signOut(); });
+      var s = document.createElement('span'); s.className = 'who'; s.textContent = user.username;
+      b.textContent = 'Sign out'; b.addEventListener('click', function(){ signOut(); });
       area.appendChild(s);
     } else {
       b.textContent = 'Sign in'; b.addEventListener('click', function(){ showGate(true); });
     }
     area.appendChild(b);
   }
+  function signedIn(u){
+    user = u; setSess(u.email); renderArea(); hideGate();
+    var w = $('who'); if (w && !w.value) { w.value = u.email; w.dispatchEvent(new Event('input')); }
+    window.dispatchEvent(new Event('venus-users'));
+    if (afterAuth) { var f = afterAuth; afterAuth = null; f(); }
+  }
+  function signOut(){ user = null; setSess(null); renderArea(); window.dispatchEvent(new Event('venus-users')); if (mode === 'site') showGate(false); }
 
   $('tabReg').addEventListener('click', function(){ setTab(true); });
   $('tabLog').addEventListener('click', function(){ setTab(false); });
   $('gateClose').addEventListener('click', function(){ if (dismissible) { hideGate(); afterAuth = null; } });
-  $('googleBtn').addEventListener('click', function(){
-    setMsg('');
-    auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(function(e){ setMsg(friendly(e)); });
-  });
-  $('forgotBtn').addEventListener('click', function(){
-    var em = $('authEmail').value.trim();
-    if (!em) { setMsg('Enter your email above first.'); return; }
-    auth.sendPasswordResetEmail(em).then(function(){ setMsg('Password reset email sent. Check your inbox.', true); }, function(e){ setMsg(friendly(e)); });
-  });
   $('authForm').addEventListener('submit', function(ev){
     ev.preventDefault();
-    var name = $('authName').value.trim(), em = $('authEmail').value.trim(), pw = $('authPass').value;
-    if (!em || !pw) { setMsg('Enter your email and password.'); return; }
-    if (regMode && !name) { setMsg('Enter your name.'); return; }
-    setMsg('Please wait...', true);
-    var p;
+    var id = $('authEmail').value.trim(), name = $('authName').value.trim(), pw = $('authPass').value;
+    var users = load();
     if (regMode) {
-      p = auth.createUserWithEmailAndPassword(em, pw).then(function(cred){
-        return cred.user.updateProfile({ displayName: name }).then(function(){ return cred.user.sendEmailVerification().catch(function(){}); });
+      var em = id.toLowerCase();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { setMsg('Enter a valid email address.'); return; }
+      if (!/^[A-Za-z0-9_.-]{3,24}$/.test(name)) { setMsg('Username: 3-24 letters, numbers, dot, dash or underscore.'); return; }
+      if (pw.length < 6) { setMsg('Use a password with at least 6 characters.'); return; }
+      if (users[em]) { setMsg('This email already has an account. Use Log in.'); return; }
+      for (var k in users) if (users[k].username.toLowerCase() === name.toLowerCase()) { setMsg('That username is taken. Pick another.'); return; }
+      setMsg('Please wait...', true);
+      var salt = rnd();
+      hashPw(pw, salt).then(function(h){
+        var u = { email: em, username: name, salt: salt, hash: h, created: new Date().toISOString() };
+        users[em] = u;
+        if (!save(users)) { setMsg('Your browser blocked saving. Turn off private browsing and try again.'); return; }
+        signedIn(u);
+        window.dispatchEvent(new Event('venus-signup'));
       });
     } else {
-      p = auth.signInWithEmailAndPassword(em, pw);
+      if (!id || !pw) { setMsg('Enter your email or username and password.'); return; }
+      var key = id.toLowerCase(), found = users[key];
+      if (!found) for (var k2 in users) if (users[k2].username.toLowerCase() === key) found = users[k2];
+      if (!found) { setMsg('Email/username or password is not correct. Accounts are saved per device, so sign up again if this is a new phone or browser.'); return; }
+      setMsg('Please wait...', true);
+      hashPw(pw, found.salt).then(function(h){
+        if (h !== found.hash) { setMsg('Email/username or password is not correct.'); return; }
+        signedIn(found);
+      });
     }
-    p.catch(function(e){ setMsg(friendly(e)); });
   });
 
   setTab(true);
-  auth.onAuthStateChanged(function(u){
-    user = u; renderArea();
-    if (u) {
-      hideGate();
-      var w = $('who');
-      if (w && !w.value) { w.value = u.email || ''; w.dispatchEvent(new Event('input')); }
-      if (afterAuth) { var f = afterAuth; afterAuth = null; f(); }
-    } else if (mode === 'site') {
-      showGate(false);
-    }
+  var sess = getSess(), all = load();
+  if (sess && all[sess]) { user = all[sess]; }
+  renderArea();
+  if (user) { var w0 = $('who'); if (w0 && !w0.value) { w0.value = user.email; w0.dispatchEvent(new Event('input')); } }
+  else if (mode === 'site' && !bypass()) showGate(false);
+})();
+
+/* ===================== SETTINGS, THEMES, DEVELOPER MODE ===================== */
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var DEV_HASH = '6ca3741786dc223e50312a0e4e1ff598ade9c657498b4788ea77cbe3dd7718c0';
+  var THEMES = [
+    { id:'neon',    name:'Neon Purple', bg:'#07030f', surface:'#0f0820', line:'#2f1a5c', accent:'#b86bff', accent2:'#ff4fd8', rgb1:'184,107,255', rgb2:'255,79,216', rgb3:'120,70,255' },
+    { id:'ocean',   name:'Ocean',       bg:'#030b14', surface:'#08182a', line:'#12406b', accent:'#3db8ff', accent2:'#4f7bff', rgb1:'61,184,255',  rgb2:'79,123,255',  rgb3:'40,120,220' },
+    { id:'emerald', name:'Emerald',     bg:'#03100b', surface:'#07201a', line:'#145c43', accent:'#2ff5c4', accent2:'#7dff6b', rgb1:'47,245,196',  rgb2:'125,255,107', rgb3:'20,170,120' },
+    { id:'crimson', name:'Crimson',     bg:'#100305', surface:'#1f080d', line:'#5c1a26', accent:'#ff4f6e', accent2:'#ff9a4f', rgb1:'255,79,110',  rgb2:'255,154,79',  rgb3:'200,40,70' },
+    { id:'sunset',  name:'Sunset',      bg:'#0f0608', surface:'#1e0d14', line:'#5c2a3a', accent:'#ff8a4f', accent2:'#ff4fa8', rgb1:'255,138,79',  rgb2:'255,79,168',  rgb3:'200,80,120' },
+    { id:'black',   name:'Pure Black',  bg:'#000000', surface:'#0b0b0d', line:'#2a2a33', accent:'#c9c9ff', accent2:'#8f8fff', rgb1:'160,160,255', rgb2:'120,120,200', rgb3:'80,80,140' }
+  ];
+  function get(k, d){ try { var v = localStorage.getItem(k); return v === null ? d : v; } catch(e){ return d; } }
+  function put(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+  function rgba(rgb, a){ return 'rgba(' + rgb + ',' + a + ')'; }
+  function apply(id){
+    var t = THEMES.filter(function(x){ return x.id === id; })[0] || THEMES[0];
+    var r = document.documentElement.style;
+    r.setProperty('--bg', t.bg); r.setProperty('--surface', t.surface); r.setProperty('--line', t.line);
+    r.setProperty('--accent', t.accent); r.setProperty('--accent2', t.accent2);
+    r.setProperty('--glow', rgba(t.rgb1, .55)); r.setProperty('--glow2', rgba(t.rgb2, .45));
+    r.setProperty('--rgb1', t.rgb1); r.setProperty('--rgb2', t.rgb2); r.setProperty('--rgb3', t.rgb3);
+    put('venusalgo_theme', t.id);
+    var bs = $('themeList').children; for (var i = 0; i < bs.length; i++) bs[i].setAttribute('aria-pressed', bs[i].dataset.id === t.id ? 'true' : 'false');
+  }
+  function grid(on){ document.documentElement.style.setProperty('--gridA', on ? '.07' : '0'); put('venusalgo_grid', on ? '1' : '0'); }
+
+  THEMES.forEach(function(t){
+    var b = document.createElement('button'); b.type = 'button'; b.dataset.id = t.id; b.setAttribute('aria-pressed', 'false');
+    var sw = document.createElement('i'); sw.style.background = 'linear-gradient(90deg,' + t.accent + ',' + t.accent2 + ')';
+    b.appendChild(sw); b.appendChild(document.createTextNode(t.name));
+    b.addEventListener('click', function(){ apply(t.id); });
+    $('themeList').appendChild(b);
   });
+  var gOn = get('venusalgo_grid', '1') === '1';
+  $('gridToggle').checked = gOn; grid(gOn);
+  $('gridToggle').addEventListener('change', function(){ grid(this.checked); });
+  apply(get('venusalgo_theme', 'neon'));
+
+  var fab = $('setFab'), panel = $('setPanel');
+  function toggle(open){ panel.hidden = !open; fab.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+  fab.addEventListener('click', function(){ toggle(panel.hidden); });
+  $('setClose').addEventListener('click', function(){ toggle(false); });
+
+  function sha(t){
+    if (window.crypto && crypto.subtle) return crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)).then(function(b){ return Array.prototype.map.call(new Uint8Array(b), function(x){ return ('0' + x.toString(16)).slice(-2); }).join(''); });
+    return Promise.resolve('');
+  }
+  var devOn = false;
+  function refresh(){
+    var n = window.VenusAuth ? window.VenusAuth.count() : 0;
+    $('memberCount').textContent = n; $('devCount').textContent = n;
+    var cu = window.VenusAuth && window.VenusAuth.current(); $('devNow').textContent = cu ? cu.username : '-';
+    var list = $('devList'); list.innerHTML = '';
+    (window.VenusAuth ? window.VenusAuth.list() : []).forEach(function(u){
+      var d = document.createElement('div'); d.textContent = u.username + ' · ' + u.email + ' · ' + (u.created || '').slice(0, 10); list.appendChild(d);
+    });
+  }
+  function setDev(on){
+    devOn = on;
+    $('devLocked').hidden = on; $('devOpen').hidden = !on; $('memberBadge').hidden = !on;
+    try { on ? sessionStorage.setItem('venusalgo_dev', '1') : sessionStorage.removeItem('venusalgo_dev'); } catch(e){}
+    if (on) refresh();
+  }
+  $('devForm').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var m = $('devMsg'), v = $('devPass').value; $('devPass').value = '';
+    sha('venus-dev:' + v).then(function(h){
+      if (h && h === DEV_HASH) { m.textContent = ''; setDev(true); }
+      else { m.className = 'auth-msg'; m.textContent = 'Wrong password.'; }
+    });
+  });
+  $('devLock').addEventListener('click', function(){ setDev(false); });
+  $('devClear').addEventListener('click', function(){
+    var b = this;
+    if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'Tap again to confirm'; setTimeout(function(){ b.dataset.sure = ''; b.textContent = 'Delete all accounts here'; }, 4000); return; }
+    b.dataset.sure = ''; b.textContent = 'Delete all accounts here';
+    window.VenusAuth.clear(); refresh(); $('devMsg2').textContent = 'Accounts on this device deleted.';
+  });
+  $('devCsv').addEventListener('click', function(){
+    var rows = ['username,email,created'].concat(window.VenusAuth.list().map(function(u){ return [u.username, u.email, u.created].join(','); })).join('\n');
+    var m = $('devMsg2');
+    try { navigator.clipboard.writeText(rows).then(function(){ m.textContent = 'List copied.'; }, function(){ m.textContent = 'Copy blocked by the browser.'; }); } catch(e){ m.textContent = 'Copy blocked by the browser.'; }
+  });
+  window.addEventListener('venus-users', function(){ if (devOn) refresh(); });
+  try { if (sessionStorage.getItem('venusalgo_dev') === '1') setDev(true); } catch(e){}
+})();
+
+/* ===================== SITE EXTRAS: plans, coupons, reveal, share, cloud counter ===================== */
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  function usd(n){ n = Math.round(n * 100) / 100; return '$' + (n % 1 ? n.toFixed(2) : String(n)); }
+  function esc(t){ var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
+  /* marquee */
+  var words = ['Market structure','BOS and CHoCH','Order blocks','Fair value gaps','Liquidity sweeps','Volume profile','Volume heatmap','Order flow estimate','EMA and SMA','Bollinger Bands','RSI and MACD','Entry, SL and TP','Two display modes'];
+  var mq = $('marq'); words.concat(words).forEach(function(w){ var sp = document.createElement('span'); sp.textContent = w; mq.appendChild(sp); });
+  $('delHours').textContent = CONFIG.deliveryHours || 24;
+
+  /* plans + coupon */
+  var plansEl = $('plans'), P = window.VENUS_PLAN;
+  function updatePlanUI(){
+    var final = VP(), base = P.base;
+    $('buyTitle').textContent = 'Get VenusAlgo' + (P.id === 'pro' ? ' Pro' : '') + ' for ' + usd(final) + '.';
+    $('purchaseBtn').textContent = 'Purchase for ' + usd(final);
+    var cards = plansEl.children;
+    CONFIG.plans.forEach(function(pl, i){
+      cards[i].setAttribute('aria-pressed', pl.id === P.id ? 'true' : 'false');
+      var price = cards[i].querySelector('.pr');
+      var f = Math.round(pl.price * (1 - P.disc / 100) * 100) / 100;
+      price.innerHTML = (P.disc > 0 ? '<s>' + usd(pl.price) + '</s>' : '') + esc(usd(f));
+    });
+    window.dispatchEvent(new Event('venus-plan'));
+  }
+  CONFIG.plans.forEach(function(pl){
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'glass plan'; b.setAttribute('aria-pressed', 'false');
+    var h = '<h3>' + esc(pl.name) + '</h3><div class="pr"></div><ul>' + pl.items.map(function(i){ return '<li>' + esc(i) + '</li>'; }).join('') + '</ul>';
+    if (pl.badge) h += '<span class="badge">' + esc(pl.badge) + '</span>';
+    b.innerHTML = h;
+    b.addEventListener('click', function(){ P.id = pl.id; P.name = pl.name; P.base = pl.price; updatePlanUI(); });
+    plansEl.appendChild(b);
+  });
+  function applyCoupon(){
+    var code = $('coupon').value.trim().toUpperCase(), m = $('couponMsg');
+    if (!code) { P.disc = 0; P.code = ''; m.textContent = ''; updatePlanUI(); return; }
+    var pct = (CONFIG.coupons || {})[code];
+    if (pct > 0) { P.disc = pct; P.code = code; m.className = 'auth-msg ok'; m.textContent = code + ' applied: ' + pct + '% off.'; window.dispatchEvent(new Event('venus-coupon')); }
+    else { P.disc = 0; P.code = ''; m.className = 'auth-msg'; m.textContent = 'That code is not valid.'; }
+    updatePlanUI();
+  }
+  $('couponBtn').addEventListener('click', applyCoupon);
+  $('coupon').addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); applyCoupon(); } });
+  updatePlanUI();
+
+  /* announcement */
+  function showBanner(t){
+    var a = $('announce'); if (!t) { a.hidden = true; return; }
+    a.innerHTML = ''; var sp = document.createElement('span'); sp.textContent = t; a.appendChild(sp);
+    var x = document.createElement('button'); x.type = 'button'; x.setAttribute('aria-label', 'Close'); x.innerHTML = '&times;'; x.addEventListener('click', function(){ a.hidden = true; }); a.appendChild(x); a.hidden = false;
+  }
+  window.VenusBanner = showBanner;
+  if (CONFIG.announcement) showBanner(CONFIG.announcement);
+
+  /* video, community */
+  if (CONFIG.demoVideo && /^https:\/\//.test(CONFIG.demoVideo)) {
+    var f = document.createElement('iframe'); f.src = CONFIG.demoVideo; f.title = 'VenusAlgo demo'; f.allow = 'accelerometer; encrypted-media; picture-in-picture'; f.setAttribute('allowfullscreen', '');
+    $('videoBox').appendChild(f); $('video').hidden = false;
+  }
+  var comm = $('comm');
+  [['Telegram', CONFIG.telegram], ['Discord', CONFIG.discord], ['Instagram', CONFIG.instagram ? 'https://instagram.com/' + CONFIG.instagram : '']].forEach(function(x){
+    if (!x[1]) return; var a = document.createElement('a'); a.className = 'btn ghost sm'; a.href = x[1]; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Join us on ' + x[0]; if (x[0] === 'Instagram') a.textContent = 'Follow on Instagram'; comm.appendChild(a); comm.hidden = false;
+  });
+  document.querySelectorAll('.mailAddr').forEach(function(e){ if (!e.textContent) e.textContent = CONFIG.contactEmail; });
+
+  /* share */
+  var url = location.href.split('#')[0], txt = 'VenusAlgo - TradingView SMC indicator with Entry, SL and TP';
+  $('shTg').href = 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(txt);
+  $('shWa').href = 'https://wa.me/?text=' + encodeURIComponent(txt + ' ' + url);
+  $('shX').href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt) + '&url=' + encodeURIComponent(url);
+  $('shCopy').addEventListener('click', function(){
+    var b = this;
+    function ok(){ b.textContent = 'Copied!'; setTimeout(function(){ b.textContent = 'Copy link'; }, 1800); }
+    try { navigator.clipboard.writeText(url).then(ok, function(){}); } catch(e){}
+  });
+  if (navigator.share) { var n = $('shNative'); n.hidden = false; n.addEventListener('click', function(){ navigator.share({ title: 'VenusAlgo', text: txt, url: url }).catch(function(){}); }); }
+
+  /* analytics (optional) */
+  if (CONFIG.plausibleDomain) { var ps = document.createElement('script'); ps.defer = true; ps.setAttribute('data-domain', CONFIG.plausibleDomain); ps.src = 'https://plausible.io/js/script.js'; document.head.appendChild(ps); }
+
+  /* scroll reveal */
+  var rv = document.querySelectorAll('.rv');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+    rv.forEach(function(e){ io.observe(e); });
+    setTimeout(function(){ rv.forEach(function(e){ e.classList.add('in'); }); }, 4000);
+  } else rv.forEach(function(e){ e.classList.add('in'); });
+  document.querySelectorAll('.sec-head,.inv > div,.rule,.logic,.chartbox,.proof-grid').forEach(function(e){ if (!e.classList.contains('rv')) { e.classList.add('rv'); if ('IntersectionObserver' in window) io.observe(e); else e.classList.add('in'); } });
+
+  /* shared member counter via Firestore REST (optional) */
+  var C = CONFIG.cloud || {}, on = !!(C.projectId && C.apiKey);
+  var base = on ? 'https://firestore.googleapis.com/v1/projects/' + encodeURIComponent(C.projectId) + '/databases/(default)/documents' : '';
+  window.VenusCloud = {
+    on: on,
+    count: function(){
+      if (!on) return Promise.resolve(null);
+      return fetch(base + '/stats/users?key=' + encodeURIComponent(C.apiKey)).then(function(r){ if (r.status === 404) return 0; if (!r.ok) throw new Error('x'); return r.json().then(function(j){ return parseInt(j.fields && j.fields.count && j.fields.count.integerValue || '0', 10); }); }).catch(function(){ return undefined; });
+    },
+    bump: function(){
+      if (!on) return;
+      var doc = 'projects/' + C.projectId + '/databases/(default)/documents/stats/users';
+      fetch(base + ':commit?key=' + encodeURIComponent(C.apiKey), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ writes: [{ transform: { document: doc, fieldTransforms: [{ fieldPath: 'count', increment: { integerValue: '1' } }] } }] }) }).catch(function(){});
+    }
+  };
+  window.addEventListener('venus-signup', function(){ window.VenusCloud.bump(); });
+})();
+
+/* ===================== DEVELOPER TOOLS ===================== */
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  function jget(k, d){ try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch(e){ return d; } }
+  function jput(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+  function copy(t, msg){
+    var m = $('devMsg2');
+    try { navigator.clipboard.writeText(t).then(function(){ m.textContent = msg || 'Copied.'; }, function(){ m.textContent = 'Copy blocked by the browser.'; }); } catch(e){ m.textContent = 'Copy blocked by the browser.'; }
+  }
+  function row(list, text){ var d = document.createElement('div'); d.textContent = text; list.appendChild(d); return d; }
+
+  /* activity counters */
+  var EV = 'venusalgo_events';
+  function bump(k){ var e = jget(EV, {}); e[k] = (e[k] || 0) + 1; jput(EV, e); }
+  bump('Page views');
+  document.addEventListener('click', function(ev){
+    var t = ev.target; if (!t || !t.closest) return;
+    if (t.closest('#purchaseBtn')) bump('Purchase clicks');
+    if (t.closest('.coins button')) bump('Coin selections');
+    if (t.closest('.plan')) bump('Plan picks');
+    if (t.closest('#aiFab')) bump('Assistant opened');
+    if (t.closest('#copyAddr')) bump('Address copied');
+  }, true);
+  window.addEventListener('venus-coupon', function(){ bump('Coupons applied'); });
+  window.addEventListener('venus-signup', function(){ bump('Sign-ups here'); });
+  function renderEv(){ var l = $('evList'); l.innerHTML = ''; var e = jget(EV, {}); var ks = Object.keys(e); if (!ks.length) row(l, 'No activity yet.'); ks.forEach(function(k){ row(l, k + ': ' + e[k]); }); }
+  $('evReset').addEventListener('click', function(){ jput(EV, {}); renderEv(); });
+
+  /* sales ledger */
+  var SK = 'venusalgo_sales';
+  function renderSales(){
+    var a = jget(SK, []), l = $('slList'); l.innerHTML = '';
+    var tot = 0; a.forEach(function(x, i){
+      tot += Number(x.usd) || 0;
+      var d = row(l, x.date.slice(0, 10) + ' · $' + x.usd + ' · ' + x.coin + ' · ' + (x.who || '-') + (x.tx ? ' · ' + x.tx.slice(0, 10) + '...' : '') + '  ');
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = 'remove'; b.style.cssText = 'background:none;border:0;color:var(--accent2);cursor:pointer;font:inherit';
+      b.addEventListener('click', function(){ var arr = jget(SK, []); arr.splice(i, 1); jput(SK, arr); renderSales(); }); d.appendChild(b);
+    });
+    if (!a.length) row(l, 'No sales logged yet.');
+    $('slTotal').textContent = '$' + (Math.round(tot * 100) / 100); $('slN').textContent = a.length;
+  }
+  $('slAdd').addEventListener('click', function(){
+    var usd = parseFloat($('slUsd').value);
+    if (!(usd > 0)) { $('devMsg2').textContent = 'Enter the USD amount.'; return; }
+    var a = jget(SK, []); a.push({ date: new Date().toISOString(), coin: $('slCoin').value, usd: usd, who: $('slWho').value.trim(), tx: $('slTx').value.trim() });
+    jput(SK, a); $('slUsd').value = ''; $('slWho').value = ''; $('slTx').value = ''; $('devMsg2').textContent = 'Sale added.'; renderSales();
+  });
+  $('slCopy').addEventListener('click', function(){
+    var q = function(v){ return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
+    copy(['date,coin,usd,buyer,txid'].concat(jget(SK, []).map(function(x){ return [x.date, x.coin, x.usd, x.who, x.tx].map(q).join(','); })).join('\n'), 'Sales copied as CSV.');
+  });
+
+  /* crypto amount calculator */
+  var DEC = { BTC: 6, ETH: 5, SOL: 3, BNB: 4 };
+  function calc(){
+    var out = {}, l = $('pcOut'); l.innerHTML = '';
+    ['BTC','ETH','SOL','BNB'].forEach(function(c){
+      var p = parseFloat($('pc' + c).value);
+      if (p > 0) { var f = Math.pow(10, DEC[c]); var amt = (Math.ceil(CONFIG.priceUSD / p * f - 1e-9) / f).toFixed(DEC[c]); out[c] = { amt: amt, ref: p }; row(l, c + ': ' + amt + ' (at $' + p + ')'); }
+    });
+    if (!Object.keys(out).length) row(l, 'Enter at least one price.');
+    return out;
+  }
+  ['BTC','ETH','SOL','BNB'].forEach(function(c){ $('pc' + c).value = CONFIG.fixed[c].ref; $('pc' + c).addEventListener('input', calc); });
+  $('pcCopy').addEventListener('click', function(){
+    var o = calc(), f = {};
+    ['BTC','ETH','SOL','BNB'].forEach(function(c){ f[c] = o[c] || CONFIG.fixed[c]; });
+    var parts = ['BTC','ETH','SOL','BNB'].map(function(c){ return c + ":{amt:'" + f[c].amt + "',ref:" + f[c].ref + '}'; });
+    parts.push("USDTB:{amt:'20',ref:1}", "USDTE:{amt:'20',ref:1}", "USDTS:{amt:'20',ref:1}");
+    copy('fixed: { ' + parts.join(', ') + ' },', 'Copied. Paste it over the fixed: line in CONFIG.');
+  });
+  calc();
+
+  /* referral codes */
+  function renderCp(){ var l = $('cpList'); l.innerHTML = ''; var c = CONFIG.coupons || {}; Object.keys(c).forEach(function(k){ row(l, k + ' = ' + c[k] + '% off'); }); if (!Object.keys(c).length) row(l, 'No codes yet.'); }
+  $('cpCopy').addEventListener('click', function(){
+    var c = {}; Object.keys(CONFIG.coupons || {}).forEach(function(k){ c[k] = CONFIG.coupons[k]; });
+    var n = $('cpName').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, ''), p = parseInt($('cpPct').value, 10);
+    if (n && p > 0 && p <= 90) c[n] = p;
+    copy('coupons: ' + JSON.stringify(c).replace(/"/g, "'") + ',', 'Copied. Paste it over the coupons: line in CONFIG.');
+  });
+  renderCp();
+
+  /* site tools */
+  $('tBypass').checked = (function(){ try { return localStorage.getItem('venusalgo_bypass') === '1'; } catch(e){ return false; } })();
+  $('tBypass').addEventListener('change', function(){ try { this.checked ? localStorage.setItem('venusalgo_bypass', '1') : localStorage.removeItem('venusalgo_bypass'); } catch(e){} });
+  $('tAnnBtn').addEventListener('click', function(){ if (window.VenusBanner) window.VenusBanner($('tAnn').value.trim()); });
+  $('tAnnClear').addEventListener('click', function(){ if (window.VenusBanner) window.VenusBanner(''); });
+  $('tWallets').addEventListener('click', function(){
+    var l = $('tOut'); l.innerHTML = '';
+    var chk = { BTC: /^(bc1[a-z0-9]{25,62}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/, SOL: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/, EVM: /^0x[a-fA-F0-9]{40}$/ };
+    Object.keys(WALLETS).forEach(function(k){
+      var a = WALLETS[k].addr, kind = k === 'BTC' ? 'BTC' : (k === 'SOL' || k === 'USDTS') ? 'SOL' : 'EVM';
+      row(l, (chk[kind].test(a) ? 'OK   ' : 'BAD  ') + k + '  ' + a.slice(0, 8) + '...' + a.slice(-6));
+    });
+    row(l, 'Format check only. Always send a small test to confirm you control each wallet.');
+  });
+
+  /* refresh when the dev panel opens */
+  function cloudLine(){
+    var el = $('devCloudLine');
+    if (!window.VenusCloud || !window.VenusCloud.on) { el.textContent = 'Shared counter is off. Add your Firebase project id and key under CONFIG.cloud to count sign-ups from every device.'; return; }
+    el.textContent = 'Total sign-ups (all devices): loading...';
+    window.VenusCloud.count().then(function(n){ el.textContent = (n === undefined) ? 'Shared counter could not be reached. Check CONFIG.cloud and your Firestore rules.' : 'Total sign-ups (all devices): ' + n; if (typeof n === 'number') $('memberCount').textContent = n; });
+  }
+  function refreshAll(){ renderSales(); renderEv(); renderCp(); cloudLine(); }
+  new MutationObserver(function(){ if (!$('devOpen').hidden) refreshAll(); }).observe($('devOpen'), { attributes: true, attributeFilter: ['hidden'] });
+  if (!$('devOpen').hidden) refreshAll();
 })();
 
 /* ===================== VENUS ASSISTANT ===================== */
@@ -975,7 +1572,7 @@ var WALLETS = {
   var KB = [
     { k: ['hi','hello','hey','namaste','help'], a: "Hi, I'm the Venus assistant. I can guide you through buying, payment methods and networks, and what the indicator does. What would you like to know?" },
     { k: ['how to buy','buy','purchase','order','checkout','how do i pay','how to pay','get it','start'], a: function(){ return "Here is how to buy:\n1. Press Purchase in the Checkout section.\n2. Choose a payment method (and the network for USDT).\n3. Send the amount shown to the address shown.\n4. Email proof of payment to " + email + ": a screenshot of the transaction and the transaction ID (TXID).\n5. Once the payment is confirmed on the blockchain, your indicator file is delivered."; }, acts: CHECKOUT },
-    { k: ['price','cost','how much','usd','$20','20 dollars','amount','amounts'], a: function(){ return "The price is $20 USD, paid in crypto. Fixed amounts for $20 right now: " + amounts() + " Always send at least the amount shown. Amounts are refreshed when prices move."; }, acts: CHECKOUT },
+    { k: ['price','cost','how much','usd','$20','$35','20 dollars','amount','amounts','bundle','pro','plan'], a: function(){ return 'There are two plans: the Indicator for $20 and the Pro bundle for $35 (indicator, backtestable strategy and the Venus Momentum companion). Press Purchase, pick a plan, then choose a coin. Referral codes work in the box above the Purchase button.'; }, acts: CHECKOUT },
     { k: ['payment method','payment methods','methods','accept','crypto','which coin','bitcoin','btc','ethereum','eth','solana','sol','bnb','usdt','tether'], a: "You can pay with Bitcoin, Ethereum, Solana, BNB, or Tether (USDT) on BNB Smart Chain, Ethereum or Solana. Press Purchase, then pick one. You can also get access by sponsoring the project: contact us on Instagram @" + ig + ".", acts: CHECKOUT },
     { k: ['paypal','card','upi','bank','cash','credit','debit','other payment','another payment','different payment'], a: "We take crypto. If you need a different payment method, email " + email + " and we will see what we can arrange.", acts: CONTACT },
     { k: ['fee','fees','gas','cheapest','cheap','low cost','expensive'], a: "Network fees come from the blockchain, not from us. USDT on BNB Smart Chain (BEP-20) and Solana are usually the cheapest, and Ethereum is often the most expensive. Check the fee in your wallet before you send." },
@@ -990,7 +1587,7 @@ var WALLETS = {
     { k: ['refund','return','cancel','chargeback','money back'], a: "Crypto payments are final and cannot be reversed. If something went wrong with your order, contact us and we will look into it.", acts: CONTACT },
     { k: ['sponsor','sponsorship','free','without paying','no money','dont want to pay','discount','offer'], a: "If you don't want to pay with money, you can still get access to our indicator by sponsoring it. Contact us on Instagram @" + ig + ".", acts: [{ l: 'Instagram @' + ig, url: 'https://instagram.com/' + ig }] },
     { k: ['contact','support','talk','human','owner','email','instagram'], a: "You can reach us by email at " + email + " or on Instagram @" + ig + ".", acts: CONTACT },
-    { k: ['sign in','signin','login','log in','register','account','google','password','sign up','signup'], a: function(){ return (window.VenusAuth && window.VenusAuth.configured) ? "Use the Sign in button at the top. You can continue with Google or register with an email and password. Your account email helps us match your order." : "Accounts are being set up. For now you can buy without signing in."; } },
+    { k: ['sign in','signin','login','log in','register','account','password','sign up','signup','username'], a: function(){ return "Tap Sign in at the top. Sign up with your email, a username and a password, and you stay signed in on this device. Log in later with your email or username. Forgot your password? Email " + email + "."; } },
     { k: ['tradingview','pine','compatible','plan','free plan','mobile','app','requirement','requirements'], a: "VenusAlgo is a Pine Script indicator for TradingView. You need a TradingView account, and some TradingView plans limit how many indicators you can use on one chart, so check your plan." },
     { k: ['results','screenshots','backtest','performance','winning','proof of profit'], a: "The Results section shows chart screenshots of the indicator in use. They are selected examples of signals and trade boxes, not a record of profit and loss. Past results do not predict future results." },
     { k: ['order flow','limitation','limitations','repaint','tick','accurate'], a: "TradingView does not give scripts tick data, so order flow is estimated by splitting each candle's volume into buying and selling. It is an approximation, not a footprint chart. Volume features also need an instrument that reports volume." },
