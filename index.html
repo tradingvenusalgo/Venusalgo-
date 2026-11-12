@@ -328,7 +328,8 @@ details.q .ans{padding:0 0 18px;color:var(--mute);font-size:15.5px;display:grid;
 details.q .ans b{color:var(--fg);font-weight:500}
 .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;align-items:start}
 .video-box{aspect-ratio:16/9;max-width:860px;border-radius:18px;overflow:hidden;border:1px solid rgba(var(--rgb1),.5);box-shadow:0 0 40px var(--glow)}
-.video-box iframe{width:100%;height:100%;border:0}
+.video-box iframe,.video-box video{width:100%;height:100%;border:0;display:block;background:#000;object-fit:contain}
+.vo-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px;max-width:860px}
 .plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:22px 0 6px}
 .plan{text-align:left;color:var(--fg);font:inherit;cursor:pointer;display:grid;gap:8px;position:relative}
 .plan[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 34px var(--glow)}
@@ -504,6 +505,7 @@ details.dv[open] summary::before{content:"\25BE"}
   <div class="wrap">
     <div class="sec-head rv"><div><div class="eyebrow">Demo</div><h2>See it working on a live chart.</h2></div><p>A walkthrough of the two display modes and how a signal is drawn.</p></div>
     <div class="video-box rv" id="videoBox"></div>
+    <div class="vo-row" id="voRow" hidden><button class="btn ghost sm" type="button" id="voBtn" aria-pressed="true">Voice-over: On</button><span class="set-note">Narration is spoken by your device's built-in voice while the video plays.</span></div>
   </div>
 </section>
 
@@ -818,7 +820,9 @@ var CONFIG = {
   announcement: '',                         // e.g. 'Launch week: use code VENUS10 for 10% off'
   telegram: '',                             // e.g. 'https://t.me/yourchannel'
   discord: '',                              // e.g. 'https://discord.gg/yourinvite'
-  demoVideo: '',                            // YouTube embed link, e.g. 'https://www.youtube.com/embed/VIDEO_ID'
+  demoVideo: 'demo.mp4',                    // video file uploaded next to index.html, or a YouTube embed link. Empty hides the section
+  demoPoster: 'demo-poster.jpg',            // optional cover picture (upload next to index.html)
+  voiceOver: true,                          // speaks the narration with the visitor's device voice while the video plays
   plausibleDomain: '',                      // e.g. 'venusalgo.com' after you sign up at plausible.io (optional analytics)
   // Optional shared member counter (all devices). See the setup note: needs a free Firebase project with Firestore.
   cloud: { projectId: '', apiKey: '' },
@@ -1395,9 +1399,54 @@ var WALLETS = {
   if (CONFIG.announcement) showBanner(CONFIG.announcement);
 
   /* video, community */
-  if (CONFIG.demoVideo && /^https:\/\//.test(CONFIG.demoVideo)) {
-    var f = document.createElement('iframe'); f.src = CONFIG.demoVideo; f.title = 'VenusAlgo demo'; f.allow = 'accelerometer; encrypted-media; picture-in-picture'; f.setAttribute('allowfullscreen', '');
-    $('videoBox').appendChild(f); $('video').hidden = false;
+  if (CONFIG.demoVideo) {
+    var vb = $('videoBox'), isFile = /\.(mp4|webm)(\?.*)?$/i.test(CONFIG.demoVideo);
+    if (isFile) {
+      var vd = document.createElement('video'); vd.controls = true; vd.playsInline = true; vd.preload = 'metadata'; vd.setAttribute('playsinline', ''); vd.src = CONFIG.demoVideo;
+      if (CONFIG.demoPoster) vd.poster = CONFIG.demoPoster;
+      vd.addEventListener('error', function(){ $('video').hidden = true; });
+      vb.appendChild(vd); $('video').hidden = false;
+      /* voice-over: spoken with the device's own voice, timed to the video */
+      var CUES = [
+        [0.3, 'Meet VenusAlgo. The whole chart, or just the trade.'],
+        [4.3, 'It reads the market the way a trader does.'],
+        [9.0, 'Market structure shows the trend.'],
+        [11.6, 'A break of structure confirms it.'],
+        [14.2, 'A liquidity sweep shows stops taken.'],
+        [16.8, 'Order blocks mark where big orders may sit.'],
+        [19.4, 'Fair value gaps show imbalances.'],
+        [21.9, 'EMA and Bollinger track the trend.'],
+        [23.9, 'Volume and order flow show who is in control.'],
+        [26.0, 'Then a nine point score checks that everything agrees.'],
+        [29.8, 'A trade needs six or more.'],
+        [31.6, 'When it does, you get a ready plan: entry, stop loss, and two targets.'],
+        [38.0, 'Too busy? Switch to Entry, S L and T P only, and the rest disappears.'],
+        [44.3, 'The Pro bundle adds a strategy, higher timeframe checks, early exits, and a momentum companion.'],
+        [50.3, 'VenusAlgo dot com. Indicator, twenty dollars. Pro bundle, thirty five dollars.']
+      ];
+      var ss = window.speechSynthesis, vo = CONFIG.voiceOver !== false, ci = 0, voice = null;
+      if (ss && window.SpeechSynthesisUtterance) {
+        $('voRow').hidden = false;
+        var pick = function(){ var vs = ss.getVoices() || []; var en = vs.filter(function(v){ return /^en/i.test(v.lang); }); voice = en.filter(function(v){ return /(Samantha|Google US English|Natural|Aria|Jenny|Daniel|Google UK English)/i.test(v.name); })[0] || en[0] || null; };
+        pick(); if (ss.addEventListener) ss.addEventListener('voiceschanged', pick);
+        var say = function(t){ var u = new SpeechSynthesisUtterance(t); u.lang = 'en-US'; u.rate = 1.02; if (voice) u.voice = voice; ss.speak(u); };
+        var resync = function(){ try { ss.cancel(); } catch(e){} ci = 0; while (ci < CUES.length && CUES[ci][0] < vd.currentTime - 0.3) ci++; };
+        vd.addEventListener('timeupdate', function(){
+          while (ci < CUES.length && vd.currentTime >= CUES[ci][0]) {
+            if (vo && !vd.paused && vd.currentTime - CUES[ci][0] < 1.5) say(CUES[ci][1]);
+            ci++;
+          }
+        });
+        vd.addEventListener('seeking', resync); vd.addEventListener('ended', function(){ ci = 0; try { ss.cancel(); } catch(e){} });
+        vd.addEventListener('pause', function(){ try { ss.pause(); } catch(e){} });
+        vd.addEventListener('play', function(){ try { ss.resume(); } catch(e){} });
+        $('voBtn').addEventListener('click', function(){ vo = !vo; this.textContent = 'Voice-over: ' + (vo ? 'On' : 'Off'); this.setAttribute('aria-pressed', vo ? 'true' : 'false'); if (!vo) { try { ss.cancel(); } catch(e){} } else resync(); });
+        window.VenusCues = CUES;
+      }
+    } else if (/^https:\/\//.test(CONFIG.demoVideo)) {
+      var f = document.createElement('iframe'); f.src = CONFIG.demoVideo; f.title = 'VenusAlgo demo'; f.allow = 'accelerometer; encrypted-media; picture-in-picture'; f.setAttribute('allowfullscreen', '');
+      vb.appendChild(f); $('video').hidden = false;
+    }
   }
   var comm = $('comm');
   [['Telegram', CONFIG.telegram], ['Discord', CONFIG.discord], ['Instagram', CONFIG.instagram ? 'https://instagram.com/' + CONFIG.instagram : '']].forEach(function(x){
