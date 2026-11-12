@@ -1,11 +1,16 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<meta name="claude:viewport-fit-sides" content="cover">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>VenusAlgo</title>
 <meta name="description" content="VenusAlgo is a TradingView indicator that combines market structure, order blocks, volume profile, order flow and classic indicators into one confluence score with a ready entry, stop loss and take-profit plan.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <style>
 /* Layout: neon-violet landing page. Single dark look by design: glowing gradients, grid backdrop, hero text beside a chart illustration, inventory columns, scoring rules, checkout. */
 :root{
@@ -195,18 +200,70 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
 .accept .ico{width:22px;height:22px;filter:drop-shadow(0 0 5px rgba(184,107,255,.5))}
 .other{margin-top:16px;padding:12px 14px;border:1px dashed rgba(255,79,216,.6);border-radius:10px;font-size:13.5px;color:var(--mute);background:rgba(255,79,216,.06)}
 .other b{color:var(--fg);font-family:var(--f-mono);font-weight:500;overflow-wrap:anywhere}
+
+/* ===== accounts, purchase flow, assistant ===== */
+[hidden]{display:none!important}
+.auth-area{display:inline-flex;align-items:center;gap:10px}
+.auth-area .who{font-size:14px;color:var(--fg)}
+.buy h3{font-size:20px;margin:28px 0 4px}
+.buy-sub{margin-top:12px;color:var(--mute);max-width:56ch}
+.purchase-bar{margin-top:26px}
+.btn.big{font-size:20px;padding:18px 36px;border-radius:12px}
+.mgroup{margin-top:16px;display:grid;gap:8px}
+.mlabel{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.sponsor{margin-top:24px;padding:14px 16px;border:1px dashed rgba(255,79,216,.6);border-radius:10px;background:rgba(255,79,216,.06);color:var(--mute);font-size:14.5px;max-width:72ch}
+.sponsor b{color:var(--fg);font-weight:600}
+.sponsor a{color:var(--accent2);font-weight:600}
+#payPanel{margin-top:36px}
+.gate{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:radial-gradient(800px 500px at 80% -10%,rgba(184,107,255,.35),transparent 60%),rgba(7,3,15,.97);overflow:auto}
+.gate-card{width:100%;max-width:420px;margin:auto;background:linear-gradient(180deg,rgba(24,12,52,.95),rgba(12,6,28,.98));border:1px solid rgba(184,107,255,.6);border-radius:16px;padding:26px;box-shadow:0 0 40px rgba(184,107,255,.35)}
+.gate-card h2{font-size:28px;margin:10px 0 8px}
+.gate-sub{color:var(--mute);font-size:14.5px;margin-bottom:18px}
+.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;background:#fff;color:#1f1f1f;font:600 16px var(--f-body);border:0;border-radius:10px;padding:13px 16px;cursor:pointer}
+.gbtn svg{width:20px;height:20px;flex:none}
+.or{display:flex;align-items:center;gap:12px;margin:18px 0 14px;color:var(--mute);font-size:12px;font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.08em}
+.or::before,.or::after{content:"";flex:1;height:1px;background:rgba(184,107,255,.35)}
+.tabs{display:flex;width:100%}
+.tabs button{flex:1}
+#authForm{display:grid;gap:12px;margin-top:14px}
+.linkbtn{background:none;border:0;color:var(--accent);font:500 14px var(--f-body);cursor:pointer;padding:6px;text-align:center}
+.auth-msg{min-height:20px;margin-top:10px;font-size:13.5px;color:#ff8aa6}
+.auth-msg.ok{color:var(--bull)}
+.ai-fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:900;display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:13px 18px;font:600 15px var(--f-body);color:var(--accent-ink);background:linear-gradient(90deg,var(--accent),var(--accent2));box-shadow:0 0 22px var(--glow),0 0 50px rgba(255,79,216,.3);cursor:pointer}
+.ai-fab svg{width:20px;height:20px}
+.ai-panel{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:950;width:min(390px,calc(100vw - 24px));height:min(600px,calc(100dvh - 24px - env(safe-area-inset-top,0px)));display:flex;flex-direction:column;background:linear-gradient(180deg,rgba(22,11,48,.98),rgba(10,5,24,.99));border:1px solid rgba(184,107,255,.65);border-radius:16px;box-shadow:0 0 40px rgba(184,107,255,.4);overflow:hidden}
+.ai-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid rgba(184,107,255,.3)}
+.ai-head b{font-family:var(--f-display);font-size:17px;display:block}
+.ai-head span{font-size:12px;color:var(--mute)}
+.ai-head button{background:none;border:1px solid rgba(184,107,255,.5);color:var(--fg);border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:18px;line-height:1}
+.ai-log{flex:1;overflow:auto;padding:14px;display:grid;gap:10px;align-content:start}
+.ai-msg{display:grid;gap:6px;max-width:92%;min-width:0}
+.ai-msg.user{justify-self:end}
+.bubble{padding:10px 13px;border-radius:12px;font-size:14.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.ai-msg.bot .bubble{background:rgba(184,107,255,.12);border:1px solid rgba(184,107,255,.35)}
+.ai-msg.user .bubble{background:linear-gradient(90deg,var(--accent),var(--accent2));color:var(--accent-ink);font-weight:500}
+.ai-acts,.ai-chips{display:flex;flex-wrap:wrap;gap:8px}
+.ai-chips{padding:0 14px 10px}
+.ai-act,.ai-chip{display:inline-block;background:rgba(184,107,255,.1);color:var(--fg);border:1px solid rgba(184,107,255,.55);border-radius:999px;padding:7px 12px;font:500 13px var(--f-body);cursor:pointer;text-decoration:none}
+.ai-act:hover,.ai-chip:hover{border-color:var(--accent2);box-shadow:0 0 12px var(--glow2)}
+.ai-form{display:flex;gap:8px;padding:12px;border-top:1px solid rgba(184,107,255,.3)}
+.ai-form input{flex:1;min-width:0;background:rgba(184,107,255,.07);border:1px solid rgba(184,107,255,.4);border-radius:8px;color:var(--fg);padding:10px 12px;font:15px var(--f-body)}
+.ai-form input:focus{outline:none;border-color:var(--accent2);box-shadow:0 0 0 3px rgba(255,79,216,.22)}
 @media (prefers-reduced-motion: no-preference){
   .cta-row .btn:first-child{animation:pulse 3.2s ease-in-out infinite}
   @keyframes pulse{0%,100%{box-shadow:0 0 0 1px rgba(255,255,255,.12) inset,0 0 22px var(--glow),0 0 52px rgba(255,79,216,.25)}50%{box-shadow:0 0 0 1px rgba(255,255,255,.2) inset,0 0 34px var(--glow),0 0 80px rgba(255,79,216,.45)}}
 }
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
 </style>
+</head>
+<body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
 <linearGradient id="solg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#9945ff"/><stop offset="1" stop-color="#14f195"/></linearGradient>
 <symbol id="i-btc" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#f7931a"/><rect x="12.4" y="6.2" width="1.9" height="3.6" rx=".5" fill="#fff"/><rect x="17.2" y="6.2" width="1.9" height="3.6" rx=".5" fill="#fff"/><rect x="12.4" y="22.2" width="1.9" height="3.6" rx=".5" fill="#fff"/><rect x="17.2" y="22.2" width="1.9" height="3.6" rx=".5" fill="#fff"/><text x="16" y="22.4" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="19" fill="#fff">B</text></symbol>
 <symbol id="i-eth" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#627eea"/><path d="M16 5 9 16.3l7-3.1z" fill="#fff" opacity=".9"/><path d="M16 5l7 11.3-7-3.1z" fill="#fff" opacity=".6"/><path d="M9 17.7l7 4.1V27z" fill="#fff" opacity=".9"/><path d="M23 17.7l-7 4.1V27z" fill="#fff" opacity=".6"/><path d="M16 14.4l7 3-7 3.9-7-3.9z" fill="#fff" opacity=".45"/></symbol>
 <symbol id="i-sol" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#12081f"/><circle cx="16" cy="16" r="15.4" fill="none" stroke="#9945ff" stroke-opacity=".6" stroke-width="1.2"/><path d="M11.2 9.6h12.9l-2.4 2.9H8.8z" fill="url(#solg)"/><path d="M8.8 14.6h12.9l2.4 2.9H11.2z" fill="url(#solg)"/><path d="M11.2 19.6h12.9l-2.4 2.9H8.8z" fill="url(#solg)"/></symbol>
 <symbol id="i-bnb" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#f3ba2f"/><g fill="#fff"><path d="M16 13.4l2.6 2.6-2.6 2.6-2.6-2.6z"/><path d="M16 7.2l3.3 3.3-1.8 1.8-1.5-1.5-1.5 1.5-1.8-1.8z"/><path d="M16 24.8l-3.3-3.3 1.8-1.8 1.5 1.5 1.5-1.5 1.8 1.8z"/><path d="M7.2 16l3.3-3.3 1.8 1.8L10.8 16l1.5 1.5-1.8 1.8z"/><path d="M24.8 16l-3.3 3.3-1.8-1.8 1.5-1.5-1.5-1.5 1.8-1.8z"/></g></symbol>
+<symbol id="i-usdt" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#26a17b"/><rect x="9" y="8.5" width="14" height="3.4" fill="#fff"/><rect x="14.3" y="8.5" width="3.4" height="15.5" fill="#fff"/><ellipse cx="16" cy="15.4" rx="8" ry="2.1" fill="none" stroke="#fff" stroke-width="1.5"/></symbol>
 </defs></svg>
 
 <header class="wrap top">
@@ -218,6 +275,7 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
     <a class="hide-sm" href="#inside">What's inside</a>
     <a class="hide-sm" href="#logic">How it signals</a>
     <a id="navProof" class="hide-sm" href="#proof" hidden>Results</a>
+    <span id="authArea" class="auth-area"></span>
     <a class="btn sm" href="#buy">Buy for $20</a>
   </nav>
 </header>
@@ -231,9 +289,9 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
       <p class="lede">VenusAlgo reads market structure, order blocks, volume and momentum together, scores the setup out of nine, and draws a ready entry, stop loss and two take-profit levels. Switch off the detail whenever you want a clean chart.</p>
       <div class="cta-row">
         <a class="btn" href="#buy">Buy for $20 in crypto</a>
-        <span class="price-tag"><b>$20</b> USD · pay in BTC, ETH, SOL or BNB</span>
+        <span class="price-tag"><b>$20</b> USD · pay in BTC, ETH, SOL, BNB or USDT</span>
       </div>
-      <div class="accept"><span>We accept</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-btc"/></svg>BTC</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-eth"/></svg>ETH</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-sol"/></svg>SOL</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-bnb"/></svg>BNB</span></div>
+      <div class="accept"><span>We accept</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-btc"/></svg>BTC</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-eth"/></svg>ETH</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-sol"/></svg>SOL</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-bnb"/></svg>BNB</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-usdt"/></svg>USDT</span></div>
       <div class="facts">
         <span><b>2</b>display modes</span>
         <span><b>9</b>point score</span>
@@ -354,27 +412,48 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
 </section>
 
 <section class="buy" id="buy">
-  <div class="wrap buy-grid">
-    <div>
-      <div class="eyebrow">Checkout</div>
-      <h2>Pay $20 in crypto.</h2>
-      <div class="seg coins" role="group" aria-label="Choose coin">
-        <button type="button" id="cBTC" aria-pressed="true"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-btc"/></svg>Bitcoin (BTC)</button>
-        <button type="button" id="cETH" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-eth"/></svg>Ethereum (ETH)</button>
-        <button type="button" id="cSOL" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-sol"/></svg>Solana (SOL)</button>
-        <button type="button" id="cBNB" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-bnb"/></svg>BNB Chain (BNB)</button>
+  <div class="wrap">
+    <div class="eyebrow">Checkout</div>
+    <h2>Get VenusAlgo for $20.</h2>
+    <p class="buy-sub">Pay in crypto. Press Purchase, then choose how you want to pay.</p>
+    <div class="purchase-bar">
+      <button class="btn big" type="button" id="purchaseBtn" aria-expanded="false" aria-controls="methods">Purchase for $20</button>
+    </div>
+
+    <div id="methods" hidden>
+      <h3>Choose a payment method</h3>
+      <div class="mgroup"><span class="mlabel">Coins</span>
+        <div class="seg coins" role="group" aria-label="Coins">
+          <button type="button" id="cBTC" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-btc"/></svg>Bitcoin (BTC)</button>
+          <button type="button" id="cETH" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-eth"/></svg>Ethereum (ETH)</button>
+          <button type="button" id="cSOL" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-sol"/></svg>Solana (SOL)</button>
+          <button type="button" id="cBNB" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-bnb"/></svg>BNB Chain (BNB)</button>
+        </div>
       </div>
-      <div class="big" id="amount" aria-live="polite">Loading price…</div>
-      <div class="sub" id="rateLine">Fetching the current rate</div>
-      <div class="manual" id="manual">
+      <div class="mgroup"><span class="mlabel">Tether (USDT): pick the network</span>
+        <div class="seg coins" role="group" aria-label="Tether USDT networks">
+          <button type="button" id="cUSDTB" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-usdt"/></svg>USDT on BNB Smart Chain (BEP-20)</button>
+          <button type="button" id="cUSDTE" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-usdt"/></svg>USDT on Ethereum (ERC-20)</button>
+          <button type="button" id="cUSDTS" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-usdt"/></svg>USDT on Solana</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="sponsor"><b>Don't want to pay with money?</b> You can still get access to our indicator by sponsoring it. Contact us on Instagram <a href="https://instagram.com/venusalgo" target="_blank" rel="noopener">@venusalgo</a>.</p>
+
+    <div id="payPanel" class="buy-grid" hidden>
+      <div>
+        <div class="addr-label">You pay</div>
+        <div class="big" id="amount" aria-live="polite">Loading price...</div>
+        <div class="sub" id="rateLine"></div>
+        <div class="manual" id="manual">
         <label for="manualRate"><span id="manualMsg">Live rate unavailable.</span> Enter the current price of <span id="manualCoin">SOL</span> in USD:</label>
         <input id="manualRate" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 150.00">
       </div>
-      <div class="status" id="timer"></div>
-    </div>
-
-    <div>
-      <div class="pay">
+        <div class="status" id="timer"></div>
+      </div>
+      <div>
+        <div class="pay">
         <div class="pay-row">
           <div id="qr" aria-label="QR code of the wallet address"></div>
           <div>
@@ -410,9 +489,41 @@ footer{border-top:1px solid rgba(184,107,255,.25)}
 </section>
 </main>
 
+
+<div id="authGate" class="gate" hidden role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <div class="gate-card">
+    <div class="eyebrow">VenusAlgo</div>
+    <h2 id="gateTitle">Create your free account</h2>
+    <p class="gate-sub">Sign in to continue. Your account email identifies your order and is used for support.</p>
+    <button class="gbtn" type="button" id="googleBtn"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.5-4.1 7-10.2 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 010-9.4l-7.9-6.1a24 24 0 000 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Continue with Google</button>
+    <div class="or"><span>or use email</span></div>
+    <div class="seg tabs" role="group" aria-label="Account mode">
+      <button type="button" id="tabReg" aria-pressed="true">Register</button>
+      <button type="button" id="tabLog" aria-pressed="false">Log in</button>
+    </div>
+    <form id="authForm" novalidate>
+      <label class="field" id="nameWrap" for="authName">Name<input id="authName" type="text" autocomplete="name"></label>
+      <label class="field" for="authEmail">Email<input id="authEmail" type="email" autocomplete="email" inputmode="email"></label>
+      <label class="field" for="authPass">Password (6+ characters)<input id="authPass" type="password" autocomplete="new-password"></label>
+      <button class="btn" type="submit" id="authSubmit">Create account</button>
+      <button class="linkbtn" type="button" id="forgotBtn">Forgot password?</button>
+    </form>
+    <p class="auth-msg" id="authMsg" role="status" aria-live="polite"></p>
+    <button class="linkbtn" id="gateClose" type="button" hidden>Not now</button>
+  </div>
+</div>
+
+<button id="aiFab" class="ai-fab" type="button" aria-expanded="false" aria-controls="aiPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Ask Venus</button>
+<div id="aiPanel" class="ai-panel" hidden role="dialog" aria-label="Venus assistant">
+  <div class="ai-head"><div><b>Venus Assistant</b><span>Automated guide for buyers</span></div><button type="button" id="aiClose" aria-label="Close assistant">&times;</button></div>
+  <div class="ai-log" id="aiLog" role="log" aria-live="polite"></div>
+  <div class="ai-chips" id="aiChips"></div>
+  <form class="ai-form" id="aiForm"><input id="aiInput" type="text" placeholder="Ask about buying, payment, features..." autocomplete="off" aria-label="Your question"><button class="btn sm" type="submit">Send</button></form>
+</div>
+
 <footer>
   <div class="wrap">
-    <p><b>© VenusAlgo</b> · VenusAlgo.com</p>
+    <p><b>© VenusAlgo</b> · VenusAlgo.com · Instagram <a href="https://instagram.com/venusalgo" target="_blank" rel="noopener">@venusalgo</a></p>
     <p>VenusAlgo is an educational charting tool. It is not financial advice and does not guarantee profit. Trading leveraged or volatile assets carries a high risk of loss, and you can lose more than you expect. Past performance, including any screenshot, does not predict future results. Only trade with money you can afford to lose.</p>
     <p>Cryptocurrency payments are final and cannot be reversed. Check the network and address before you send. VenusAlgo is not affiliated with or endorsed by TradingView. TradingView is a trademark of its owner.</p>
   </div>
@@ -425,6 +536,13 @@ var CONFIG = {
   contactEmail: 'tradingvenusalgo@gmail.com',
   contactTelegram: '',                      // e.g. '@venusalgo' (optional)
   quoteMinutes: 10,
+  instagram: 'venusalgo',
+  // Accounts. 'site' = everyone signs in first, 'purchase' = sign in when pressing Purchase, 'off' = no sign-in.
+  // Sign-in only turns on after you paste your Firebase keys below (see the setup steps).
+  requireSignIn: 'site',
+  firebase: { apiKey: '', authDomain: '', projectId: '', appId: '' },
+  // Optional: URL of a server that answers questions with a real AI model. Leave empty to use the built-in guide.
+  aiEndpoint: '',
   // Fixed amounts for $20 USD. liveRates:false shows these exact amounts.
   // Set liveRates:true to convert the USD price from live market rates instead.
   liveRates: false,
@@ -432,7 +550,10 @@ var CONFIG = {
     BTC: { amt: '0.000271', ref: 73690 },
     ETH: { amt: '0.00968',  ref: 2066 },
     SOL: { amt: '0.241',    ref: 83 },
-    BNB: { amt: '0.0295',   ref: 678 }
+    BNB: { amt: '0.0295',   ref: 678 },
+    USDTB: { amt: '20', ref: 1 },
+    USDTE: { amt: '20', ref: 1 },
+    USDTS: { amt: '20', ref: 1 }
   },
   // Add real, verified trade screenshots here. Use image files next to this page
   // or data: URIs. The Results section appears only when this list has items.
@@ -460,7 +581,13 @@ var WALLETS = {
   SOL: { addr: '35YLHr2AfJ9a79mENVmC6Jv6qaUKtebDmwFBSeiRx5Qr', name: 'Solana', dec: 4, cg: 'solana', cb: 'SOL-USD',
          net: 'Solana mainnet', warn: 'Send SOL on the Solana network only.' },
   BNB: { addr: '0x3FFb0e2B7f9aB222c98c5eD98F1207EA0F050cbD', name: 'BNB Smart Chain', dec: 5, cg: 'binancecoin', cb: 'BNB-USD',
-         net: 'BNB Smart Chain (BEP-20)', warn: 'Send BNB on BNB Smart Chain (BEP-20) only. Do not send it on Ethereum or the old BNB Beacon Chain.' }
+         net: 'BNB Smart Chain (BEP-20)', warn: 'Send BNB on BNB Smart Chain (BEP-20) only. Do not send it on Ethereum or the old BNB Beacon Chain.' },
+  USDTB: { addr: '0x3FFb0e2B7f9aB222c98c5eD98F1207EA0F050cbD', name: 'USDT on BNB Smart Chain', sym: 'USDT', dec: 2, cg: 'tether', cb: 'USDT-USD',
+         net: 'BNB Smart Chain (BEP-20)', warn: 'Send USDT on BNB Smart Chain (BEP-20) only. Do not use TRC-20, ERC-20 or any other network.' },
+  USDTE: { addr: '0x3FFb0e2B7f9aB222c98c5eD98F1207EA0F050cbD', name: 'USDT on Ethereum', sym: 'USDT', dec: 2, cg: 'tether', cb: 'USDT-USD',
+         net: 'Ethereum (ERC-20)', warn: 'Send USDT on Ethereum (ERC-20) only. Network fees on Ethereum can be high, so BEP-20 is usually cheaper.' },
+  USDTS: { addr: '35YLHr2AfJ9a79mENVmC6Jv6qaUKtebDmwFBSeiRx5Qr', name: 'USDT on Solana', sym: 'USDT', dec: 2, cg: 'tether', cb: 'USDT-USD',
+         net: 'Solana (SPL)', warn: 'Send USDT on the Solana network only. Do not use TRC-20, ERC-20 or BEP-20.' }
 };
 
 /* ===================== CHART ILLUSTRATION ===================== */
@@ -581,8 +708,8 @@ var WALLETS = {
 
 /* ===================== CHECKOUT ===================== */
 (function(){
-  var ORDER = ['BTC','ETH','SOL','BNB'];
-  var coin = 'BTC', rates = {}, disputed = {}, fetchedAt = 0, manual = {}, timerId = null;
+  var ORDER = ['BTC','ETH','SOL','BNB','USDTB','USDTE','USDTS'];
+  var coin = 'BTC', chosen = false, rates = {}, disputed = {}, fetchedAt = 0, manual = {}, timerId = null;
   var $ = function(id){ return document.getElementById(id); };
 
   function timeout(ms){ var c = new AbortController(); setTimeout(function(){ c.abort(); }, ms); return c.signal; }
@@ -624,22 +751,23 @@ var WALLETS = {
     return (Math.ceil(CONFIG.priceUSD / r * f) / f).toFixed(d);
   }
   function hhmm(ts){ return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+  function sym(){ return WALLETS[coin].sym || coin; }
   function render(){
     var w = WALLETS[coin], amt = amountText();
-    ORDER.forEach(function(c){ $('c' + c).setAttribute('aria-pressed', c === coin ? 'true' : 'false'); });
+    ORDER.forEach(function(c){ $('c' + c).setAttribute('aria-pressed', (chosen && c === coin) ? 'true' : 'false'); });
     $('manual').classList.toggle('on', CONFIG.liveRates && !(rates[coin] > 0));
     $('manualCoin').textContent = coin;
     $('manualMsg').textContent = disputed[coin] ? 'Live price sources disagree.' : 'Live rate unavailable.';
-    $('addrLabel').textContent = w.name + ' address (' + coin + ')';
+    $('addrLabel').textContent = w.name + ' address (' + sym() + ')';
     $('addr').textContent = w.addr;
-    $('amount').textContent = amt ? amt + ' ' + coin : 'Enter the rate to see the amount';
+    $('amount').textContent = amt ? amt + ' ' + sym() : 'Enter the rate to see the amount';
     var r = rateNow();
     $('rateLine').textContent = r > 0
       ? ('= $' + CONFIG.priceUSD.toFixed(2) + ' USD  ·  1 ' + coin + ' = $' + r.toLocaleString(undefined, { maximumFractionDigits: 2 }) + (manual[coin] > 0 ? ' (entered by you)' : '  ·  rate from ' + hhmm(fetchedAt)))
       : 'Price: $' + CONFIG.priceUSD.toFixed(2) + ' USD';
     if (!CONFIG.liveRates){
       var fx = CONFIG.fixed[coin];
-      $('rateLine').textContent = '= $' + CONFIG.priceUSD.toFixed(2) + ' USD  ·  reference price 1 ' + coin + ' = $' + fx.ref.toLocaleString();
+      $('rateLine').textContent = '= $' + CONFIG.priceUSD.toFixed(2) + ' USD  ·  reference price 1 ' + sym() + ' = $' + fx.ref.toLocaleString();
       $('timer').textContent = 'Fixed amount for $' + CONFIG.priceUSD.toFixed(2) + ' USD. Send this amount or more.';
     }
     var wt = $('warn'); wt.innerHTML = '';
@@ -657,7 +785,7 @@ var WALLETS = {
   function buildMsg(){
     var amt = amountText();
     var msg = 'VenusAlgo order\n' +
-      'Paid: ' + (amt ? amt + ' ' + coin : coin) + ' (USD ' + CONFIG.priceUSD + ')\n' +
+      'Paid: ' + (amt ? amt + ' ' + sym() : sym()) + ' (USD ' + CONFIG.priceUSD + ')\n' +
       'Network: ' + WALLETS[coin].net + '\n' +
       'TXID: ' + ($('txid').value.trim() || '(paste TXID)') + '\n' +
       'Send the indicator to: ' + ($('who').value.trim() || '(your email or Telegram)') + '\nProof of payment: screenshot of the transaction attached';
@@ -687,7 +815,7 @@ var WALLETS = {
     else fallback();
   }
   ORDER.forEach(function(c){
-    $('c' + c).addEventListener('click', function(){ coin = c; $('manualRate').value = manual[c] > 0 ? manual[c] : ''; render(); });
+    $('c' + c).addEventListener('click', function(){ coin = c; chosen = true; $('manualRate').value = manual[c] > 0 ? manual[c] : ''; render(); var pp = $('payPanel'); pp.hidden = false; setTimeout(function(){ pp.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50); });
   });
   $('manualRate').addEventListener('input', function(){ var v = parseFloat(this.value); manual[coin] = v > 0 ? v : null; render(); });
   $('txid').addEventListener('input', buildMsg);
@@ -703,7 +831,242 @@ var WALLETS = {
   render();
   if (CONFIG.liveRates) loadRates();
 })();
+
+/* ===================== PURCHASE FLOW ===================== */
+(function(){
+  var pb = document.getElementById('purchaseBtn'), methods = document.getElementById('methods');
+  function reveal(){
+    methods.hidden = false;
+    pb.setAttribute('aria-expanded', 'true');
+    setTimeout(function(){ methods.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+  }
+  pb.addEventListener('click', function(){
+    if (window.VenusAuth) window.VenusAuth.require(reveal); else reveal();
+  });
+})();
+
+/* ===================== ACCOUNTS (Firebase Authentication) ===================== */
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var cfg = CONFIG.firebase || {};
+  var configured = !!(cfg.apiKey && cfg.authDomain && cfg.projectId && cfg.appId) && typeof firebase !== 'undefined';
+  var mode = CONFIG.requireSignIn || 'off';
+  var gate = $('authGate'), area = $('authArea');
+  var user = null, regMode = true, afterAuth = null, dismissible = false, auth = null;
+
+  window.VenusAuth = {
+    configured: configured,
+    require: function(cb){
+      if (!configured || mode === 'off' || user) { cb(); return; }
+      afterAuth = cb; showGate(true);
+    }
+  };
+  if (!configured) return;
+
+  firebase.initializeApp(cfg);
+  auth = firebase.auth();
+
+  function setMsg(t, good){ var m = $('authMsg'); m.textContent = t || ''; m.className = 'auth-msg' + (good ? ' ok' : ''); }
+  function showGate(canClose){
+    dismissible = !!canClose; $('gateClose').hidden = !dismissible;
+    gate.hidden = false; document.body.style.overflow = 'hidden'; setMsg('');
+    setTimeout(function(){ try { $('googleBtn').focus(); } catch(e){} }, 60);
+  }
+  function hideGate(){ gate.hidden = true; document.body.style.overflow = ''; }
+  function setTab(reg){
+    regMode = reg;
+    $('tabReg').setAttribute('aria-pressed', reg ? 'true' : 'false');
+    $('tabLog').setAttribute('aria-pressed', reg ? 'false' : 'true');
+    $('nameWrap').hidden = !reg;
+    $('authSubmit').textContent = reg ? 'Create account' : 'Log in';
+    $('authPass').setAttribute('autocomplete', reg ? 'new-password' : 'current-password');
+    $('gateTitle').textContent = reg ? 'Create your free account' : 'Welcome back';
+    setMsg('');
+  }
+  function friendly(e){
+    var c = (e && e.code) || '';
+    var map = {
+      'auth/email-already-in-use': 'This email already has an account. Use Log in instead.',
+      'auth/invalid-email': 'Enter a valid email address.',
+      'auth/weak-password': 'Use a password with at least 6 characters.',
+      'auth/user-not-found': 'Email or password is not correct.',
+      'auth/wrong-password': 'Email or password is not correct.',
+      'auth/invalid-credential': 'Email or password is not correct.',
+      'auth/invalid-login-credentials': 'Email or password is not correct.',
+      'auth/too-many-requests': 'Too many attempts. Wait a few minutes and try again.',
+      'auth/popup-closed-by-user': 'The Google window was closed. Try again.',
+      'auth/cancelled-popup-request': 'The Google window was closed. Try again.',
+      'auth/popup-blocked': 'Your browser blocked the Google window. Allow pop-ups and try again.',
+      'auth/unauthorized-domain': 'This website address is not approved for sign-in yet. The site owner must add it under Firebase, Authentication, Settings, Authorized domains.',
+      'auth/operation-not-allowed': 'This sign-in method is not turned on yet. The site owner must enable it in Firebase.',
+      'auth/network-request-failed': 'Network problem. Check your connection and try again.'
+    };
+    return map[c] || 'Something went wrong. Try again.';
+  }
+  function renderArea(){
+    area.innerHTML = '';
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'btn ghost sm';
+    if (user) {
+      var s = document.createElement('span'); s.className = 'who';
+      s.textContent = (user.displayName || user.email || 'Account').split(' ')[0];
+      b.textContent = 'Sign out'; b.addEventListener('click', function(){ auth.signOut(); });
+      area.appendChild(s);
+    } else {
+      b.textContent = 'Sign in'; b.addEventListener('click', function(){ showGate(true); });
+    }
+    area.appendChild(b);
+  }
+
+  $('tabReg').addEventListener('click', function(){ setTab(true); });
+  $('tabLog').addEventListener('click', function(){ setTab(false); });
+  $('gateClose').addEventListener('click', function(){ if (dismissible) { hideGate(); afterAuth = null; } });
+  $('googleBtn').addEventListener('click', function(){
+    setMsg('');
+    auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(function(e){ setMsg(friendly(e)); });
+  });
+  $('forgotBtn').addEventListener('click', function(){
+    var em = $('authEmail').value.trim();
+    if (!em) { setMsg('Enter your email above first.'); return; }
+    auth.sendPasswordResetEmail(em).then(function(){ setMsg('Password reset email sent. Check your inbox.', true); }, function(e){ setMsg(friendly(e)); });
+  });
+  $('authForm').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var name = $('authName').value.trim(), em = $('authEmail').value.trim(), pw = $('authPass').value;
+    if (!em || !pw) { setMsg('Enter your email and password.'); return; }
+    if (regMode && !name) { setMsg('Enter your name.'); return; }
+    setMsg('Please wait...', true);
+    var p;
+    if (regMode) {
+      p = auth.createUserWithEmailAndPassword(em, pw).then(function(cred){
+        return cred.user.updateProfile({ displayName: name }).then(function(){ return cred.user.sendEmailVerification().catch(function(){}); });
+      });
+    } else {
+      p = auth.signInWithEmailAndPassword(em, pw);
+    }
+    p.catch(function(e){ setMsg(friendly(e)); });
+  });
+
+  setTab(true);
+  auth.onAuthStateChanged(function(u){
+    user = u; renderArea();
+    if (u) {
+      hideGate();
+      var w = $('who');
+      if (w && !w.value) { w.value = u.email || ''; w.dispatchEvent(new Event('input')); }
+      if (afterAuth) { var f = afterAuth; afterAuth = null; f(); }
+    } else if (mode === 'site') {
+      showGate(false);
+    }
+  });
+})();
+
+/* ===================== VENUS ASSISTANT ===================== */
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var fab = $('aiFab'), panel = $('aiPanel'), log = $('aiLog'), chips = $('aiChips'), form = $('aiForm'), input = $('aiInput');
+  var email = CONFIG.contactEmail, ig = CONFIG.instagram, hist = [], started = false;
+  var CONTACT = [{ l: 'Email support', url: 'mailto:' + email }, { l: 'Instagram @' + ig, url: 'https://instagram.com/' + ig }];
+  var CHECKOUT = [{ l: 'Go to checkout', f: 'checkout' }];
+  function amounts(){
+    var f = CONFIG.fixed;
+    return 'Bitcoin ' + f.BTC.amt + ' BTC, Ethereum ' + f.ETH.amt + ' ETH, Solana ' + f.SOL.amt + ' SOL, BNB ' + f.BNB.amt + ' BNB, or ' + f.USDTB.amt + ' USDT.';
+  }
+  var FALLBACK = "I can help with buying, payment methods and networks, what the indicator includes, and how to reach support. For anything else, please contact us.";
+  var KB = [
+    { k: ['hi','hello','hey','namaste','help'], a: "Hi, I'm the Venus assistant. I can guide you through buying, payment methods and networks, and what the indicator does. What would you like to know?" },
+    { k: ['how to buy','buy','purchase','order','checkout','how do i pay','how to pay','get it','start'], a: function(){ return "Here is how to buy:\n1. Press Purchase in the Checkout section.\n2. Choose a payment method (and the network for USDT).\n3. Send the amount shown to the address shown.\n4. Email proof of payment to " + email + ": a screenshot of the transaction and the transaction ID (TXID).\n5. Once the payment is confirmed on the blockchain, your indicator file is delivered."; }, acts: CHECKOUT },
+    { k: ['price','cost','how much','usd','$20','20 dollars','amount','amounts'], a: function(){ return "The price is $20 USD, paid in crypto. Fixed amounts for $20 right now: " + amounts() + " Always send at least the amount shown. Amounts are refreshed when prices move."; }, acts: CHECKOUT },
+    { k: ['payment method','payment methods','methods','accept','crypto','which coin','bitcoin','btc','ethereum','eth','solana','sol','bnb','usdt','tether'], a: "You can pay with Bitcoin, Ethereum, Solana, BNB, or Tether (USDT) on BNB Smart Chain, Ethereum or Solana. Press Purchase, then pick one. You can also get access by sponsoring the project: contact us on Instagram @" + ig + ".", acts: CHECKOUT },
+    { k: ['paypal','card','upi','bank','cash','credit','debit','other payment','another payment','different payment'], a: "We take crypto. If you need a different payment method, email " + email + " and we will see what we can arrange.", acts: CONTACT },
+    { k: ['fee','fees','gas','cheapest','cheap','low cost','expensive'], a: "Network fees come from the blockchain, not from us. USDT on BNB Smart Chain (BEP-20) and Solana are usually the cheapest, and Ethereum is often the most expensive. Check the fee in your wallet before you send." },
+    { k: ['network','trc','trc20','trc-20','erc','erc20','bep','bep20','wrong network','chain','address'], a: "Pick the same network in your wallet as the one you chose on the page. Ethereum, BNB Chain and USDT on those chains share the same 0x address, so the network matters. Do not send on any other network (for example TRC-20), because funds can be lost. We do not accept TRC-20." },
+    { k: ['proof','txid','transaction id','screenshot','hash','receipt','paid','i paid','sent'], a: function(){ return "After you send the payment, email " + email + " with a screenshot of the transaction and the transaction ID (TXID). We check it on the blockchain and then send your indicator file."; }, acts: CONTACT },
+    { k: ['deliver','delivery','receive','download','when will','how long','file','access','send me','not received'], a: function(){ return "Your indicator file is sent after we confirm your payment on the blockchain. If you have sent proof and have not heard back, contact " + email + " or message @" + ig + " on Instagram."; }, acts: CONTACT },
+    { k: ['feature','features','include','included','what do i get','inside','layers','order block','volume profile','smc','bos','choch','what is'], a: "VenusAlgo combines market structure with BOS and CHoCH, order blocks, fair value gaps, liquidity sweeps, premium and discount, volume profile and heatmap, estimated order flow with buyers vs sellers, EMA, SMA, Bollinger Bands, RSI, MACD and ATR. It then gives an entry, stop loss and two take-profit levels. Every layer has its own on/off switch." },
+    { k: ['mode','modes','two modes','clean','hide','entry sl tp','full analysis','simple','complex'], a: "There are two display modes. Full Analysis shows every layer on the chart. Entry / SL / TP Only hides the layers and keeps just the signal, entry, stop loss and targets. You switch them in the indicator settings under Display Mode." },
+    { k: ['signal','signals','how does it work','how it works','score','confluence','stop loss','take profit','tp','sl','entry'], a: "A trade needs a trigger (a break of structure, a change of character, or an order block retest) and a confluence score of at least 6 out of 9. The stop goes beyond the order block or last swing (or ATR x 1.5), TP1 is at 1.5R and TP2 at 3R, and the stop can move to breakeven after TP1. All of this can be changed in the settings." },
+    { k: ['timeframe','time frame','best time','1h','15m','4h','5m','scalp','swing'], a: "No timeframe is proven best. A common starting point is 15 minutes to 1 hour, with the 4-hour chart for the bigger picture. 1 and 5 minute charts are noisy and fees take a larger share. Test on your own market before you trade real money." },
+    { k: ['profit','guarantee','guaranteed','win rate','winrate','accuracy','risk','safe','scam','legit','trust'], a: "VenusAlgo is an educational charting tool. It does not guarantee profit and no indicator wins every trade. Trading carries a high risk of loss, so only risk money you can afford to lose. Crypto payments are final, so read this page carefully and ask us any question before you buy.", acts: CONTACT },
+    { k: ['refund','return','cancel','chargeback','money back'], a: "Crypto payments are final and cannot be reversed. If something went wrong with your order, contact us and we will look into it.", acts: CONTACT },
+    { k: ['sponsor','sponsorship','free','without paying','no money','dont want to pay','discount','offer'], a: "If you don't want to pay with money, you can still get access to our indicator by sponsoring it. Contact us on Instagram @" + ig + ".", acts: [{ l: 'Instagram @' + ig, url: 'https://instagram.com/' + ig }] },
+    { k: ['contact','support','talk','human','owner','email','instagram'], a: "You can reach us by email at " + email + " or on Instagram @" + ig + ".", acts: CONTACT },
+    { k: ['sign in','signin','login','log in','register','account','google','password','sign up','signup'], a: function(){ return (window.VenusAuth && window.VenusAuth.configured) ? "Use the Sign in button at the top. You can continue with Google or register with an email and password. Your account email helps us match your order." : "Accounts are being set up. For now you can buy without signing in."; } },
+    { k: ['tradingview','pine','compatible','plan','free plan','mobile','app','requirement','requirements'], a: "VenusAlgo is a Pine Script indicator for TradingView. You need a TradingView account, and some TradingView plans limit how many indicators you can use on one chart, so check your plan." },
+    { k: ['results','screenshots','backtest','performance','winning','proof of profit'], a: "The Results section shows chart screenshots of the indicator in use. They are selected examples of signals and trade boxes, not a record of profit and loss. Past results do not predict future results." },
+    { k: ['order flow','limitation','limitations','repaint','tick','accurate'], a: "TradingView does not give scripts tick data, so order flow is estimated by splitting each candle's volume into buying and selling. It is an approximation, not a footprint chart. Volume features also need an instrument that reports volume." },
+    { k: ['thanks','thank you','thx','ok thanks'], a: "You're welcome. Ask me anything else about buying or the indicator." }
+  ];
+  var CHIPS = ['How do I buy?', 'Which payment methods?', 'What do I get?', 'Best timeframe?', 'Is it risk free?', 'Contact support'];
+
+  function local(text){
+    var t = ' ' + text.toLowerCase().replace(/[^a-z0-9$\s\-]/g, ' ') + ' ';
+    var best = null, bs = 0;
+    KB.forEach(function(e){
+      var s = 0;
+      e.k.forEach(function(w){
+        var needle = w.length < 4 ? ' ' + w + ' ' : w;
+        if (t.indexOf(needle) > -1) s += w.length > 6 ? 2 : 1;
+      });
+      if (s > bs) { bs = s; best = e; }
+    });
+    if (!best) return { a: FALLBACK, acts: CONTACT };
+    return { a: typeof best.a === 'function' ? best.a() : best.a, acts: best.acts || [] };
+  }
+  function run(f){
+    if (f === 'checkout') {
+      panel.hidden = true; fab.setAttribute('aria-expanded', 'false');
+      var b = document.getElementById('buy'); if (b) b.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+  function add(who, text, acts){
+    var d = document.createElement('div'); d.className = 'ai-msg ' + who;
+    var p = document.createElement('div'); p.className = 'bubble'; p.textContent = text; d.appendChild(p);
+    if (acts && acts.length) {
+      var r = document.createElement('div'); r.className = 'ai-acts';
+      acts.forEach(function(a){
+        var el;
+        if (a.url) { el = document.createElement('a'); el.href = a.url; el.target = '_blank'; el.rel = 'noopener'; }
+        else { el = document.createElement('button'); el.type = 'button'; el.addEventListener('click', function(){ run(a.f); }); }
+        el.className = 'ai-act'; el.textContent = a.l; r.appendChild(el);
+      });
+      d.appendChild(r);
+    }
+    log.appendChild(d); log.scrollTop = log.scrollHeight;
+  }
+  function reply(text){
+    if (CONFIG.aiEndpoint) {
+      return fetch(CONFIG.aiEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text, history: hist.slice(-6) }) })
+        .then(function(r){ if (!r.ok) throw 0; return r.json(); })
+        .then(function(j){ if (!j || !j.reply) throw 0; return { a: String(j.reply), acts: [] }; })
+        .catch(function(){ return local(text); });
+    }
+    return Promise.resolve(local(text));
+  }
+  function send(text){
+    text = (text || '').trim(); if (!text) return;
+    add('user', text); hist.push({ role: 'user', text: text }); input.value = '';
+    reply(text).then(function(r){
+      setTimeout(function(){ add('bot', r.a, r.acts); hist.push({ role: 'assistant', text: r.a }); }, 350);
+    });
+  }
+  function open(){
+    panel.hidden = false; fab.setAttribute('aria-expanded', 'true');
+    if (!started) {
+      started = true;
+      add('bot', "Hi, I'm the Venus assistant. I can guide you through buying, payment methods and networks, and what the indicator does. This is an automated guide, so for anything I can't answer, contact " + email + ".");
+      CHIPS.forEach(function(c){
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'ai-chip'; b.textContent = c;
+        b.addEventListener('click', function(){ send(c); }); chips.appendChild(b);
+      });
+    }
+    setTimeout(function(){ try { input.focus(); } catch(e){} }, 80);
+  }
+  function close(){ panel.hidden = true; fab.setAttribute('aria-expanded', 'false'); }
+  fab.addEventListener('click', function(){ if (panel.hidden) open(); else close(); });
+  $('aiClose').addEventListener('click', close);
+  form.addEventListener('submit', function(ev){ ev.preventDefault(); send(input.value); });
+  document.addEventListener('keydown', function(ev){ if (ev.key === 'Escape' && !panel.hidden) close(); });
+})();
 </script>
-
-
-</body></html>
+</body>
+</html>
