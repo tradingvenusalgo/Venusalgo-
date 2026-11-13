@@ -358,6 +358,21 @@ details.dv[open] summary::before{content:"\25BE"}
 @media (max-width:860px){.steps3,.two,.plans{grid-template-columns:1fr}.sec-head{grid-template-columns:1fr;gap:14px}}
 .nav a.btn,.nav a.btn:hover{color:var(--accent-ink);text-shadow:none}
 .cmp td:first-child{min-width:170px}
+
+.chat-fab{position:fixed;left:calc(max(16px,env(safe-area-inset-left,0px)) + 56px);bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:900;height:46px;padding:0 16px;border-radius:23px;border:1px solid var(--line);background:var(--surface);color:var(--fg);display:inline-flex;gap:8px;align-items:center;font:600 14px var(--f-body);box-shadow:0 0 18px var(--glow)}
+.chat-fab svg{width:19px;height:19px}
+.chat-panel{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 58px);z-index:950;width:min(400px,calc(100vw - 32px));height:min(70vh,560px);display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 0 40px var(--glow);overflow:hidden}
+.chat-panel[hidden]{display:none}
+.chat-note{margin:0;padding:8px 14px;font-size:12px;color:var(--warn,#ffd66b);background:rgba(255,214,107,.08);border-bottom:1px solid var(--line)}
+.chat-list{flex:1;min-height:0;overflow:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.chat-msg{max-width:88%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:7px 11px;font-size:14px;overflow-wrap:anywhere}
+.chat-msg.me{align-self:flex-end;border-color:var(--accent);background:rgba(var(--rgb1),.14)}
+.chat-msg b{font-size:12px;display:block;margin-bottom:2px}
+.chat-msg i{font:11px var(--f-mono);color:var(--mute);font-style:normal;margin-left:8px}
+.chat-empty{margin:auto;text-align:center;color:var(--mute);font-size:14px;padding:12px}
+.chat-form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
+.chat-form input{flex:1;min-width:0;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit}
+.chat-msgline{min-height:18px;padding:0 14px 8px;font-size:12.5px;color:var(--bear)}
 </style>
 </head>
 <body>
@@ -718,6 +733,14 @@ details.dv[open] summary::before{content:"\25BE"}
 </div>
 
 <button id="setFab" class="set-fab" type="button" aria-expanded="false" aria-controls="setPanel" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+<button id="chatFab" class="chat-fab" type="button" aria-expanded="false" aria-controls="chatPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/></svg>World chat</button>
+<div id="chatPanel" class="chat-panel" hidden role="dialog" aria-label="World chat">
+  <div class="ai-head"><div><b>World chat</b><span id="chatSub">Talk with other traders</span></div><button type="button" id="chatClose" aria-label="Close chat">&times;</button></div>
+  <p class="chat-note">Be kind. No links, wallet addresses or sales. Staff will never ask you for crypto here, so never send money to anyone in chat.</p>
+  <div class="chat-list" id="chatList" aria-live="polite"></div>
+  <div class="chat-msgline" id="chatErr" role="status"></div>
+  <form class="chat-form" id="chatForm"><input id="chatInput" type="text" maxlength="200" placeholder="Write a message" autocomplete="off" aria-label="Message"><button class="btn sm" type="submit">Send</button></form>
+</div>
 <div id="memberBadge" class="member-badge" hidden>Members: <b id="memberCount">0</b></div>
 <div id="setPanel" class="set-panel" hidden role="dialog" aria-label="Settings">
   <div class="ai-head"><div><b>Settings</b><span>Personalise this website</span></div><button type="button" id="setClose" aria-label="Close settings">&times;</button></div>
@@ -1606,6 +1629,73 @@ var WALLETS = {
   if (!$('devOpen').hidden) refreshAll();
 })();
 
+/* ===================== WORLD CHAT (Firestore REST, polling) ===================== */
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var C = CONFIG.cloud || {}, on = !!(C.projectId && C.apiKey);
+  var base = on ? 'https://firestore.googleapis.com/v1/projects/' + encodeURIComponent(C.projectId) + '/databases/(default)/documents' : '';
+  var key = on ? '?key=' + encodeURIComponent(C.apiKey) : '';
+  var fab = $('chatFab'), panel = $('chatPanel'), list = $('chatList'), err = $('chatErr'), timer = null, lastSend = 0, sent = [], seen = null;
+  function closeOthers(){ var sp = $('setPanel'); if (sp && !sp.hidden) { sp.hidden = true; $('setFab').setAttribute('aria-expanded', 'false'); } var ap = $('aiPanel'); if (ap && !ap.hidden && $('aiFab')) { try { $('aiFab').click(); } catch(e){} } }
+  function colorFor(n){ var h = 0; for (var i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) % 360; return 'hsl(' + h + ',80%,70%)'; }
+  function ago(ms){ var s = Math.max(0, (Date.now() - ms) / 1000); if (s < 60) return 'now'; if (s < 3600) return Math.floor(s / 60) + 'm'; if (s < 86400) return Math.floor(s / 3600) + 'h'; return Math.floor(s / 86400) + 'd'; }
+  function empty(t){ list.innerHTML = ''; var d = document.createElement('div'); d.className = 'chat-empty'; d.textContent = t; list.appendChild(d); }
+  function render(msgs){
+    var sig = msgs.map(function(m){ return m.name + m.text + m.ts; }).join('|');
+    if (sig === seen) return; seen = sig;
+    var me = window.VenusAuth && window.VenusAuth.current(), nearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 80;
+    list.innerHTML = '';
+    if (!msgs.length) { empty('No messages yet. Say hello!'); return; }
+    msgs.forEach(function(m){
+      var d = document.createElement('div'); d.className = 'chat-msg' + (me && me.username === m.name ? ' me' : '');
+      var b = document.createElement('b'); b.textContent = m.name; b.style.color = colorFor(m.name);
+      var t = document.createElement('i'); t.textContent = ago(m.ts); b.appendChild(t);
+      var p = document.createElement('span'); p.textContent = m.text; d.appendChild(b); d.appendChild(p); list.appendChild(d);
+    });
+    if (nearBottom || msgs.length) list.scrollTop = list.scrollHeight;
+  }
+  function fetchMsgs(){
+    if (!on) return;
+    fetch(base + ':runQuery' + key, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ structuredQuery: { from: [{ collectionId: 'messages' }], orderBy: [{ field: { fieldPath: 'ts' }, direction: 'DESCENDING' }], limit: 60 } }) })
+      .then(function(r){ if (!r.ok) throw new Error('x'); return r.json(); })
+      .then(function(rows){
+        var out = [];
+        rows.forEach(function(r){ var f = r.document && r.document.fields; if (!f) return; out.push({ name: String(f.name && f.name.stringValue || '?').slice(0, 24), text: String(f.text && f.text.stringValue || '').slice(0, 200), ts: Date.parse(f.ts && f.ts.timestampValue) || 0 }); });
+        out.reverse(); err.textContent = ''; render(out);
+      }).catch(function(){ if (seen === null) empty('Chat could not connect right now. Try again soon.'); });
+  }
+  function start(){ fetchMsgs(); clearInterval(timer); timer = setInterval(function(){ if (!document.hidden) fetchMsgs(); }, 4000); }
+  function stop(){ clearInterval(timer); timer = null; }
+  function open(v){
+    panel.hidden = !v; fab.setAttribute('aria-expanded', v ? 'true' : 'false');
+    if (!v) { stop(); return; }
+    closeOthers();
+    if (!on) { empty('World chat is not switched on yet. The owner needs to connect the chat database.'); $('chatForm').hidden = true; if (CONFIG.discord) { var a = document.createElement('a'); a.className = 'btn sm'; a.href = CONFIG.discord; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Join our Discord chat'; a.style.marginTop = '12px'; list.firstChild.appendChild(document.createElement('br')); list.firstChild.appendChild(a); } return; }
+    seen = null; empty('Loading...'); start();
+  }
+  fab.addEventListener('click', function(){ open(panel.hidden); });
+  $('chatClose').addEventListener('click', function(){ open(false); });
+
+  var BAD = /https?:|www\.|\.(com|net|org|io|me|xyz|ru|cc|to|ly|gg)\b|t\.me|@[a-z0-9_]{3,}|0x[a-f0-9]{8,}|\bbc1[a-z0-9]{10,}|[1-9A-HJ-NP-Za-km-z]{32,}/i;
+  $('chatForm').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var input = $('chatInput'), text = input.value.replace(/\s+/g, ' ').trim();
+    if (!text) return;
+    var me = window.VenusAuth && window.VenusAuth.current();
+    if (!me) { err.textContent = 'Sign in to chat.'; if (window.VenusAuth) window.VenusAuth.require(function(){ err.textContent = ''; }); return; }
+    if (BAD.test(text)) { err.textContent = 'Links, @handles and wallet addresses are not allowed in chat.'; return; }
+    var now = Date.now(); sent = sent.filter(function(x){ return now - x < 60000; });
+    if (now - lastSend < 3000) { err.textContent = 'Slow down a little.'; return; }
+    if (sent.length >= 12) { err.textContent = 'Too many messages. Wait a minute.'; return; }
+    lastSend = now; sent.push(now); err.textContent = ''; input.value = '';
+    fetch(base + '/messages' + key, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields: { name: { stringValue: me.username.slice(0, 24) }, text: { stringValue: text.slice(0, 200) }, ts: { timestampValue: new Date().toISOString() } } }) })
+      .then(function(r){ if (!r.ok) throw new Error('x'); fetchMsgs(); })
+      .catch(function(){ err.textContent = 'Message not sent. Check your connection.'; input.value = text; });
+  });
+  var sf = $('setFab'); if (sf) sf.addEventListener('click', function(){ if (!panel.hidden) open(false); }, true);
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden && !panel.hidden && on) fetchMsgs(); });
+})();
+
 /* ===================== VENUS ASSISTANT ===================== */
 (function(){
   var $ = function(id){ return document.getElementById(id); };
@@ -1636,6 +1726,7 @@ var WALLETS = {
     { k: ['refund','return','cancel','chargeback','money back'], a: "Crypto payments are final and cannot be reversed. If something went wrong with your order, contact us and we will look into it.", acts: CONTACT },
     { k: ['sponsor','sponsorship','free','without paying','no money','dont want to pay','discount','offer'], a: "If you don't want to pay with money, you can still get access to our indicator by sponsoring it. Contact us on Instagram @" + ig + ".", acts: [{ l: 'Instagram @' + ig, url: 'https://instagram.com/' + ig }] },
     { k: ['contact','support','talk','human','owner','email','instagram'], a: "You can reach us by email at " + email + " or on Instagram @" + ig + ".", acts: CONTACT },
+    { k: ['chat','community','talk','forum','discord','telegram','people'], a: function(){ return 'Tap World chat at the bottom left to talk with other traders. You need to be signed in. Links, wallet addresses and sales are not allowed, and we will never ask you for crypto in chat.'; } },
     { k: ['sign in','signin','login','log in','register','account','password','sign up','signup','username'], a: function(){ return "Tap Sign in at the top. Sign up with your email, a username and a password, and you stay signed in on this device. Log in later with your email or username. Forgot your password? Email " + email + "."; } },
     { k: ['tradingview','pine','compatible','plan','free plan','mobile','app','requirement','requirements'], a: "VenusAlgo is a Pine Script indicator for TradingView. You need a TradingView account, and some TradingView plans limit how many indicators you can use on one chart, so check your plan." },
     { k: ['results','screenshots','backtest','performance','winning','proof of profit'], a: "The Results section shows chart screenshots of the indicator in use. They are selected examples of signals and trade boxes, not a record of profit and loss. Past results do not predict future results." },
