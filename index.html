@@ -373,6 +373,37 @@ details.dv[open] summary::before{content:"\25BE"}
 .chat-form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
 .chat-form input{flex:1;min-width:0;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit}
 .chat-msgline{min-height:18px;padding:0 14px 8px;font-size:12.5px;color:var(--bear)}
+
+.an-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+.an-drop{border:2px dashed rgba(var(--rgb1),.5);border-radius:18px;min-height:240px;display:grid;place-items:center;text-align:center;padding:18px;cursor:pointer;background:rgba(var(--rgb1),.05);transition:border-color .2s,background .2s;position:relative;overflow:hidden}
+.an-drop:hover,.an-drop.drag{border-color:var(--accent);background:rgba(var(--rgb1),.12)}
+.an-drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.an-drop img{max-width:100%;max-height:340px;border-radius:12px;display:block}
+.an-drop .hint{color:var(--mute);font-size:15px;display:grid;gap:6px;justify-items:center}
+.an-drop .hint b{color:var(--fg);font-size:17px}
+.an-form{display:grid;gap:10px;margin-top:12px}
+.an-form .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.an-form input,.an-form select{min-width:0;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit}
+.an-res{min-height:240px}
+.an-res .empty{color:var(--mute);display:grid;place-items:center;text-align:center;min-height:200px;padding:12px}
+.an-badge{display:inline-flex;align-items:center;gap:8px;font:800 20px var(--f-display);padding:8px 16px;border-radius:999px}
+.an-badge.long{background:rgba(47,245,196,.16);color:var(--bull);border:1px solid var(--bull)}
+.an-badge.short{background:rgba(255,79,134,.16);color:var(--bear);border:1px solid var(--bear)}
+.an-badge.none{background:rgba(180,170,210,.14);color:var(--mute);border:1px solid var(--line)}
+.an-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.an-conf{font:700 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.an-lv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}
+.an-lv div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid}
+.an-lv span{font:600 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.an-lv b{font:700 20px var(--f-mono)}
+.an-lv .sl b{color:var(--bear)}.an-lv .tp b{color:var(--bull)}
+.an-list{margin:6px 0 0;padding-left:18px;display:grid;gap:5px;font-size:14.5px;color:var(--mute)}
+.an-res h4{margin:14px 0 2px;font:700 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.an-err{color:var(--bear);font-size:14px;min-height:20px}
+.an-note{font-size:12.5px;color:var(--mute);margin-top:10px}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-3px;margin-right:8px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (max-width:860px){.an-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -396,6 +427,7 @@ details.dv[open] summary::before{content:"\25BE"}
     <a class="hide-sm" href="#inside">What's inside</a>
     <a class="hide-sm" href="#logic">How it signals</a>
     <a id="navProof" class="hide-sm" href="#proof" hidden>Results</a>
+    <a class="hide-sm" href="#analyst">AI Analyst</a>
     <a class="hide-sm" href="#compare">Compare</a>
     <a class="hide-sm" href="#learn">Learn</a>
     <a class="hide-sm" href="#faq">FAQ</a>
@@ -575,6 +607,25 @@ details.dv[open] summary::before{content:"\25BE"}
   </div>
 </section>
 
+<section id="analyst">
+  <div class="wrap">
+    <div class="sec-head rv"><div><div class="eyebrow">AI chart analyst</div><h2>Upload a chart. Get a trade plan.</h2></div><p>Add a screenshot of any market. The AI reads the structure, levels and trend and returns an entry, stop loss and two targets, or tells you to stay out when the chart is unclear.</p></div>
+    <div class="an-grid">
+      <div class="glass rv">
+        <label class="an-drop" id="anDrop" for="anFile"><input id="anFile" type="file" accept="image/*"><div class="hint" id="anHint"><b>Tap to add a chart screenshot</b><span>or drag a picture here. Include the price scale on the right side.</span></div></label>
+        <div class="an-form">
+          <div class="row"><input id="anSym" type="text" placeholder="Market, e.g. BTCUSD" autocomplete="off" aria-label="Market"><select id="anTf" aria-label="Timeframe"><option value="">Timeframe</option><option>1m</option><option>5m</option><option>15m</option><option>30m</option><option>1h</option><option>4h</option><option>1D</option></select></div>
+          <input id="anNote" type="text" maxlength="200" placeholder="Anything the AI should know? (optional)" autocomplete="off" aria-label="Note">
+          <button class="btn" type="button" id="anGo" disabled>Analyze chart</button>
+          <div class="an-err" id="anErr" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+      <div class="glass an-res rv" id="anRes"><div class="empty">Your trade plan will appear here.</div></div>
+    </div>
+    <p class="an-note rv">AI analysis can be wrong. It is an educational idea, not financial advice, and no result is guaranteed. Always use the stop loss and never risk more than you can afford to lose.</p>
+  </div>
+</section>
+
 <section id="setup">
   <div class="wrap">
     <div class="sec-head rv"><div><div class="eyebrow">Setup guide</div><h2>On your chart in about two minutes.</h2></div><p>You receive plain text Pine Script files. They work in TradingView on web, desktop and the phone app (editing code is easiest on a computer or tablet).</p></div>
@@ -648,7 +699,7 @@ details.dv[open] summary::before{content:"\25BE"}
       </div>
     </div>
 
-    <p class="sponsor"><b>Don't want to pay with money?</b> You can still get access to our indicator by sponsoring it. Contact us on Instagram <a href="https://instagram.com/venusalgo" target="_blank" rel="noopener">@venusalgo</a>.</p>
+    <p class="sponsor"><b>Don't want to pay with money?</b> You can still get access to our indicator by sponsoring it. Contact us on Instagram <a href="https://instagram.com/ForexVenus" target="_blank" rel="noopener">@ForexVenus</a>.</p>
 
     <div id="payPanel" class="buy-grid" hidden>
       <div>
@@ -704,7 +755,7 @@ details.dv[open] summary::before{content:"\25BE"}
       <details class="q rv"><summary>Payments and refunds</summary><div class="ans"><p>Payment is in cryptocurrency and cannot be reversed. All sales are final once the files have been delivered. If the files do not arrive or cannot be loaded, contact us and we will resolve it.</p></div></details>
       <details class="q rv"><summary>No financial advice</summary><div class="ans"><p>VenusAlgo is an educational charting tool. Nothing on this site is financial advice, and no result is guaranteed. Screenshots are examples and not a record of all trades. You are responsible for your own trading decisions and losses.</p></div></details>
       <details class="q rv"><summary>Privacy</summary><div class="ans"><p>Accounts on this site are stored in your own browser on your device. We only learn your email address if you email us, for example to send payment proof. We do not sell your information.</p></div></details>
-      <details class="q rv"><summary>Contact</summary><div class="ans"><p>Email <b class="mailAddr"></b> or message <a href="https://instagram.com/venusalgo" target="_blank" rel="noopener">@venusalgo</a> on Instagram.</p></div></details>
+      <details class="q rv"><summary>Contact</summary><div class="ans"><p>Email <b class="mailAddr"></b> or message <a href="https://instagram.com/ForexVenus" target="_blank" rel="noopener">@ForexVenus</a> on Instagram.</p></div></details>
     </div>
   </div>
 </section>
@@ -815,7 +866,7 @@ details.dv[open] summary::before{content:"\25BE"}
       <a class="btn ghost sm" id="shX" target="_blank" rel="noopener" href="#">X</a>
     </div>
     <br>
-    <p><b>© VenusAlgo</b> · VenusAlgo.com · Instagram <a href="https://instagram.com/venusalgo" target="_blank" rel="noopener">@venusalgo</a></p>
+    <p><b>© VenusAlgo</b> · VenusAlgo.com · Instagram <a href="https://instagram.com/ForexVenus" target="_blank" rel="noopener">@ForexVenus</a></p>
     <p>VenusAlgo is an educational charting tool. It is not financial advice and does not guarantee profit. Trading leveraged or volatile assets carries a high risk of loss, and you can lose more than you expect. Past performance, including any screenshot, does not predict future results. Only trade with money you can afford to lose.</p>
     <p>Cryptocurrency payments are final and cannot be reversed. Check the network and address before you send. VenusAlgo is not affiliated with or endorsed by TradingView. TradingView is a trademark of its owner.</p>
   </div>
@@ -826,9 +877,9 @@ details.dv[open] summary::before{content:"\25BE"}
 var CONFIG = {
   priceUSD: 20,
   contactEmail: 'tradingvenusalgo@gmail.com',
-  contactTelegram: '',                      // e.g. '@venusalgo' (optional)
+  contactTelegram: '',                      // e.g. '@ForexVenus' (optional)
   quoteMinutes: 10,
-  instagram: 'venusalgo',
+  instagram: 'ForexVenus',
   // Accounts. 'site' = everyone signs in first, 'purchase' = sign in when pressing Purchase, 'off' = no sign-in.
   // Sign-in only turns on after you paste your Firebase keys below (see the setup steps).
   requireSignIn: 'site',
@@ -849,6 +900,9 @@ var CONFIG = {
   plausibleDomain: '',                      // e.g. 'venusalgo.com' after you sign up at plausible.io (optional analytics)
   // Optional shared member counter (all devices). See the setup note: needs a free Firebase project with Firestore.
   cloud: { projectId: '', apiKey: '' },
+  // AI chart analyst: the address of your secure AI relay (see the setup notes). The AI key is NEVER put in this file.
+  analyzeEndpoint: '',
+  geminiKey: 'AQ.Ab8RN6KxsDWKPgvwCNHgLrl0Mdc2dO36PixQgIW437vn11M0Ag',
   // Optional: URL of a server that answers questions with a real AI model. Leave empty to use the built-in guide.
   aiEndpoint: '',
   // Fixed amounts for $20 USD. liveRates:false shows these exact amounts.
@@ -1696,6 +1750,120 @@ var WALLETS = {
   document.addEventListener('visibilitychange', function(){ if (!document.hidden && !panel.hidden && on) fetchMsgs(); });
 })();
 
+/* ===================== AI CHART ANALYST ===================== */
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var img = null, busy = false, KEY = 'venusalgo_an_times';
+  function esc(t){ var d = document.createElement('div'); d.textContent = t == null ? '' : String(t); return d.innerHTML; }
+  function setErr(t){ $('anErr').textContent = t || ''; }
+  function fmt(n){ if (n == null || isNaN(n)) return '-'; var a = Math.abs(n); return Number(n).toLocaleString('en-US', { maximumFractionDigits: a >= 100 ? 2 : a >= 1 ? 4 : 6 }); }
+
+  function load(file){
+    setErr('');
+    if (!file || !/^image\//.test(file.type)) { setErr('Please choose a picture file.'); return; }
+    var fr = new FileReader();
+    fr.onload = function(){
+      var im = new Image();
+      im.onload = function(){
+        var max = 1600, sc = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
+        c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc);
+        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+        var url = c.toDataURL('image/jpeg', .85);
+        if (url.length > 5200000) { url = c.toDataURL('image/jpeg', .6); }
+        img = url.split(',')[1];
+        var p = document.createElement('img'); p.src = url; p.alt = 'Your chart screenshot';
+        var d = $('anDrop'); var h = $('anHint'); if (h) h.style.display = 'none';
+        var old = d.querySelector('img'); if (old) old.remove(); d.appendChild(p);
+        $('anGo').disabled = !(CONFIG.analyzeEndpoint||CONFIG.geminiKey);
+        if (!CONFIG.analyzeEndpoint&&!CONFIG.geminiKey) setErr('The AI analyst is not switched on yet.');
+      };
+      im.onerror = function(){ setErr('That picture could not be read. Try a different screenshot.'); };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  }
+  $('anFile').addEventListener('change', function(){ load(this.files && this.files[0]); });
+  var drop = $('anDrop');
+  ['dragenter','dragover'].forEach(function(e){ drop.addEventListener(e, function(ev){ ev.preventDefault(); drop.classList.add('drag'); }); });
+  ['dragleave','drop'].forEach(function(e){ drop.addEventListener(e, function(ev){ ev.preventDefault(); drop.classList.remove('drag'); }); });
+  drop.addEventListener('drop', function(ev){ var f = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0]; if (f) load(f); });
+
+  if (!CONFIG.analyzeEndpoint&&!CONFIG.geminiKey) { $('anRes').innerHTML = '<div class="empty">The AI analyst is being set up. Please check back soon.</div>'; }
+
+  function underLimit(){
+    var now = Date.now(), t = [];
+    try { t = (JSON.parse(localStorage.getItem(KEY)) || []).filter(function(x){ return now - x < 3600000; }); } catch(e){}
+    if (t.length >= 8) return false;
+    t.push(now); try { localStorage.setItem(KEY, JSON.stringify(t)); } catch(e){}
+    return true;
+  }
+  function list(arr){ if (!arr || !arr.length) return ''; return '<ul class="an-list">' + arr.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; }
+  function render(r){
+    var v = r.verdict, cls = v === 'LONG' ? 'long' : v === 'SHORT' ? 'short' : 'none', label = v === 'LONG' ? 'LONG' : v === 'SHORT' ? 'SHORT' : 'NO TRADE';
+    var h = '<div class="an-top"><span class="an-badge ' + cls + '">' + label + '</span><span class="an-conf">' + esc(r.confidence || '') + ' confidence</span></div>';
+    if (r.symbol || r.price_now) h += '<div class="an-conf">' + esc(r.symbol || '') + (r.price_now ? ' · price read ' + esc(fmt(r.price_now)) : '') + '</div>';
+    if (v === 'LONG' || v === 'SHORT') {
+      h += '<div class="an-lv"><div><span>Entry (' + esc((r.order_type || 'MARKET').toLowerCase()) + ')</span><b>' + esc(fmt(r.entry)) + '</b></div><div class="sl"><span>Stop loss</span><b>' + esc(fmt(r.stop_loss)) + '</b></div><div class="tp"><span>Take profit 1</span><b>' + esc(fmt(r.tp1)) + '</b></div><div class="tp"><span>Take profit 2</span><b>' + esc(fmt(r.tp2)) + '</b></div></div>';
+      h += '<div class="an-conf">Reward : risk  ' + esc(r.rr1) + 'R  /  ' + esc(r.rr2) + 'R</div>';
+    }
+    if (r.reasoning && r.reasoning.length) h += '<h4>Why</h4>' + list(r.reasoning);
+    if (r.invalidation) h += '<h4>Idea is wrong if</h4><p style="margin:4px 0 0;font-size:14.5px;color:var(--mute)">' + esc(r.invalidation) + '</p>';
+    if (r.warnings && r.warnings.length) h += '<h4>Watch out</h4>' + list(r.warnings);
+    if (v === 'LONG' || v === 'SHORT') h += '<button class="btn ghost sm" type="button" id="anCopy" style="margin-top:14px;width:100%">Copy trade plan</button>';
+    $('anRes').innerHTML = h;
+    var cp = $('anCopy');
+    if (cp) cp.addEventListener('click', function(){
+      var t = (r.symbol || 'Trade') + ' ' + v + '\nEntry ' + fmt(r.entry) + ' (' + (r.order_type || 'MARKET').toLowerCase() + ')\nSL ' + fmt(r.stop_loss) + '\nTP1 ' + fmt(r.tp1) + '\nTP2 ' + fmt(r.tp2);
+      var b = this; function ok(){ b.textContent = 'Copied!'; setTimeout(function(){ b.textContent = 'Copy trade plan'; }, 1800); }
+      try { navigator.clipboard.writeText(t).then(ok, function(){}); } catch(e){}
+    });
+  }
+
+  var PROMPT = 'You are a careful crypto/forex chart analyst using Smart Money Concepts (market structure, BOS/CHoCH, order blocks, fair value gaps, liquidity sweeps, premium/discount). Read the attached chart screenshot. Use ONLY prices you can read from the right-hand price scale and candles. Never invent numbers. Rules: If the chart is unclear, the price scale is unreadable, structure is choppy, or no setup has at least 1.5R to TP1, answer verdict NO_TRADE and explain. Stop loss goes beyond a real structural level (swing or order block). LONG: stop_loss < entry < tp1 < tp2. SHORT: stop_loss > entry > tp1 > tp2. price_now is the current price you read. Use LIMIT only if entry is a retest level away from price_now, otherwise MARKET. Give 3-4 short reasoning bullets, one invalidation sentence, and any warnings. Be conservative: skipping a trade is better than forcing one.';
+  var SCHEMA = { type: 'OBJECT', properties: { verdict: { type: 'STRING', enum: ['LONG','SHORT','NO_TRADE'] }, confidence: { type: 'STRING', enum: ['low','medium','high'] }, symbol: { type: 'STRING' }, price_now: { type: 'NUMBER' }, order_type: { type: 'STRING', enum: ['MARKET','LIMIT'] }, entry: { type: 'NUMBER' }, stop_loss: { type: 'NUMBER' }, tp1: { type: 'NUMBER' }, tp2: { type: 'NUMBER' }, reasoning: { type: 'ARRAY', items: { type: 'STRING' } }, invalidation: { type: 'STRING' }, warnings: { type: 'ARRAY', items: { type: 'STRING' } } }, required: ['verdict','confidence','reasoning'] };
+  function validate(r){
+    var n = function(x){ return typeof x === 'number' && isFinite(x) && x > 0; };
+    if (r.verdict !== 'LONG' && r.verdict !== 'SHORT') { r.verdict = 'NO_TRADE'; return r; }
+    var e = r.entry, sl = r.stop_loss, a = r.tp1, b = r.tp2, lg = r.verdict === 'LONG';
+    var ok = n(e) && n(sl) && n(a) && n(b) && (lg ? sl < e && e < a && a < b : sl > e && e > a && a > b);
+    if (!ok) return { verdict: 'NO_TRADE', confidence: 'low', symbol: r.symbol, reasoning: ['The levels read from the chart did not add up to a valid trade, so it was rejected.'], warnings: ['Try a clearer screenshot with the price scale visible.'] };
+    var risk = Math.abs(e - sl), r1 = Math.abs(a - e) / risk, r2 = Math.abs(b - e) / risk;
+    if (r1 < 1.2) return { verdict: 'NO_TRADE', confidence: 'low', symbol: r.symbol, reasoning: ['Reward to risk was too small to be worth taking.'], warnings: [] };
+    if (n(r.price_now) && Math.abs(e - r.price_now) / r.price_now > 0.05) r.warnings = (r.warnings || []).concat(['Entry is far from the current price. Check it carefully.']);
+    r.rr1 = +r1.toFixed(2); r.rr2 = +r2.toFixed(2); r.order_type = r.order_type || 'MARKET';
+    return r;
+  }
+  function direct(ctl){
+    var ctx = 'Market: ' + ($('anSym').value.trim().slice(0,20) || 'unknown') + '. Timeframe: ' + ($('anTf').value || 'unknown') + '. User note: ' + ($('anNote').value.trim().slice(0,200) || 'none');
+    var models = ['gemini-2.5-flash','gemini-2.0-flash'], last = 'The analyst is busy. Try again.';
+    var body = JSON.stringify({ contents: [{ parts: [{ text: PROMPT + '\n' + ctx }, { inline_data: { mime_type: 'image/jpeg', data: img } }] }], generationConfig: { temperature: 0.2, responseMimeType: 'application/json', responseSchema: SCHEMA } });
+    function go(i){
+      if (i >= models.length) return Promise.reject(new Error(last));
+      return fetch('https://generativelanguage.googleapis.com/v1beta/models/' + models[i] + ':generateContent', { method: 'POST', signal: ctl.signal, headers: { 'Content-Type': 'application/json', 'x-goog-api-key': CONFIG.geminiKey }, body: body })
+        .then(function(r){ if (!r.ok) { last = (r.status === 401 || r.status === 403) ? 'The AI key was rejected (' + r.status + ').' : 'AI error ' + r.status + '. Try again.'; return go(i + 1); }
+          return r.json().then(function(j){ var t = j.candidates && j.candidates[0] && j.candidates[0].content.parts.map(function(p){ return p.text || ''; }).join(''); if (!t) return go(i + 1); return validate(JSON.parse(t)); }); });
+    }
+    return go(0);
+  }
+  function run(){
+    if (busy || !img) return;
+    if (!CONFIG.analyzeEndpoint&&!CONFIG.geminiKey) { setErr('The AI analyst is not switched on yet.'); return; }
+    if (!underLimit()) { setErr('You have reached the hourly limit. Please try again later.'); return; }
+    busy = true; setErr(''); var b = $('anGo'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Analyzing...';
+    $('anRes').innerHTML = '<div class="empty"><div><span class="spin"></span>Reading the chart. This can take up to a minute.</div></div>';
+    var ctl = new AbortController(), tm = setTimeout(function(){ ctl.abort(); }, 70000);
+    (CONFIG.analyzeEndpoint ? fetch(CONFIG.analyzeEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctl.signal, body: JSON.stringify({ image: img, mime: 'image/jpeg', symbol: $('anSym').value.trim().slice(0, 20), timeframe: $('anTf').value, note: $('anNote').value.trim().slice(0, 200) }) })
+      .then(function(r){ return r.json().catch(function(){ return { error: 'Bad reply from the analyst.' }; }).then(function(j){ if (!r.ok) throw new Error(j && j.error || 'The analyst is busy. Try again.'); return j; }); }) : direct(ctl))
+      .then(render)
+      .catch(function(e){ $('anRes').innerHTML = '<div class="empty">No result.</div>'; setErr(e.name === 'AbortError' ? 'That took too long. Try again.' : (e.message || 'Something went wrong. Try again.')); })
+      .then(function(){ clearTimeout(tm); busy = false; b.disabled = false; b.textContent = 'Analyze chart'; });
+  }
+  $('anGo').addEventListener('click', function(){
+    if (window.VenusAuth) window.VenusAuth.require(run); else run();
+  });
+  window.addEventListener('venus-users', function(){ if (!document.getElementById('anFile')) return; });
+})();
+
 /* ===================== VENUS ASSISTANT ===================== */
 (function(){
   var $ = function(id){ return document.getElementById(id); };
@@ -1726,6 +1894,7 @@ var WALLETS = {
     { k: ['refund','return','cancel','chargeback','money back'], a: "Crypto payments are final and cannot be reversed. If something went wrong with your order, contact us and we will look into it.", acts: CONTACT },
     { k: ['sponsor','sponsorship','free','without paying','no money','dont want to pay','discount','offer'], a: "If you don't want to pay with money, you can still get access to our indicator by sponsoring it. Contact us on Instagram @" + ig + ".", acts: [{ l: 'Instagram @' + ig, url: 'https://instagram.com/' + ig }] },
     { k: ['contact','support','talk','human','owner','email','instagram'], a: "You can reach us by email at " + email + " or on Instagram @" + ig + ".", acts: CONTACT },
+    { k: ['ai analyst','analyze','analyse','screenshot','chart analysis','upload','photo','ai trade','entry sl tp'], a: function(){ return 'Use the AI Analyst section: upload a chart screenshot (with the price scale visible), pick the timeframe, and tap Analyze. It returns an entry, stop loss and two targets, or NO TRADE when the chart is unclear. It can be wrong, so always use the stop loss.'; } },
     { k: ['chat','community','talk','forum','discord','telegram','people'], a: function(){ return 'Tap World chat at the bottom left to talk with other traders. You need to be signed in. Links, wallet addresses and sales are not allowed, and we will never ask you for crypto in chat.'; } },
     { k: ['sign in','signin','login','log in','register','account','password','sign up','signup','username'], a: function(){ return "Tap Sign in at the top. Sign up with your email, a username and a password, and you stay signed in on this device. Log in later with your email or username. Forgot your password? Email " + email + "."; } },
     { k: ['tradingview','pine','compatible','plan','free plan','mobile','app','requirement','requirements'], a: "VenusAlgo is a Pine Script indicator for TradingView. You need a TradingView account, and some TradingView plans limit how many indicators you can use on one chart, so check your plan." },
