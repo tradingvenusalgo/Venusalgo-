@@ -902,7 +902,7 @@ var CONFIG = {
   cloud: { projectId: '', apiKey: '' },
   // AI chart analyst: the address of your secure AI relay (see the setup notes). The AI key is NEVER put in this file.
   analyzeEndpoint: '',
-  geminiKey: 'AQ.Ab8RN6KxsDWKPgvwCNHgLrl0Mdc2dO36PixQgIW437vn11M0Ag',
+  geminiKey: 'AQ.Ab8RN6JJ3Luq_eUarR8ezIw7FuCkt5B-k_USBvuYt1v8e-qYCw',
   // Optional: URL of a server that answers questions with a real AI model. Leave empty to use the built-in guide.
   aiEndpoint: '',
   // Fixed amounts for $20 USD. liveRates:false shows these exact amounts.
@@ -1837,9 +1837,14 @@ var WALLETS = {
     var ctx = 'Market: ' + ($('anSym').value.trim().slice(0,20) || 'unknown') + '. Timeframe: ' + ($('anTf').value || 'unknown') + '. User note: ' + ($('anNote').value.trim().slice(0,200) || 'none');
     var models = ['gemini-2.5-flash','gemini-2.0-flash'], last = 'The analyst is busy. Try again.';
     var body = JSON.stringify({ contents: [{ parts: [{ text: PROMPT + '\n' + ctx }, { inline_data: { mime_type: 'image/jpeg', data: img } }] }], generationConfig: { temperature: 0.2, responseMimeType: 'application/json', responseSchema: SCHEMA } });
+    function call(i, bearer){
+      var h = { 'Content-Type': 'application/json' };
+      if (bearer) h['Authorization'] = 'Bearer ' + CONFIG.geminiKey; else h['x-goog-api-key'] = CONFIG.geminiKey;
+      return fetch('https://generativelanguage.googleapis.com/v1beta/models/' + models[i] + ':generateContent', { method: 'POST', signal: ctl.signal, headers: h, body: body });
+    }
     function go(i){
       if (i >= models.length) return Promise.reject(new Error(last));
-      return fetch('https://generativelanguage.googleapis.com/v1beta/models/' + models[i] + ':generateContent', { method: 'POST', signal: ctl.signal, headers: { 'Content-Type': 'application/json', 'x-goog-api-key': CONFIG.geminiKey }, body: body })
+      return call(i, false).then(function(r){ return (r.status === 401 && i === 0) ? call(i, true) : r; })
         .then(function(r){ if (!r.ok) { last = (r.status === 401 || r.status === 403) ? 'The AI key was rejected (' + r.status + ').' : 'AI error ' + r.status + '. Try again.'; return go(i + 1); }
           return r.json().then(function(j){ var t = j.candidates && j.candidates[0] && j.candidates[0].content.parts.map(function(p){ return p.text || ''; }).join(''); if (!t) return go(i + 1); return validate(JSON.parse(t)); }); });
     }
