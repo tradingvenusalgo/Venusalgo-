@@ -359,51 +359,7 @@ details.dv[open] summary::before{content:"\25BE"}
 .nav a.btn,.nav a.btn:hover{color:var(--accent-ink);text-shadow:none}
 .cmp td:first-child{min-width:170px}
 
-.chat-fab{position:fixed;left:calc(max(16px,env(safe-area-inset-left,0px)) + 56px);bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:900;height:46px;padding:0 16px;border-radius:23px;border:1px solid var(--line);background:var(--surface);color:var(--fg);display:inline-flex;gap:8px;align-items:center;font:600 14px var(--f-body);box-shadow:0 0 18px var(--glow)}
-.chat-fab svg{width:19px;height:19px}
-.chat-panel{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 58px);z-index:950;width:min(400px,calc(100vw - 32px));height:min(70vh,560px);display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 0 40px var(--glow);overflow:hidden}
-.chat-panel[hidden]{display:none}
-.chat-note{margin:0;padding:8px 14px;font-size:12px;color:var(--warn,#ffd66b);background:rgba(255,214,107,.08);border-bottom:1px solid var(--line)}
-.chat-list{flex:1;min-height:0;overflow:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
-.chat-msg{max-width:88%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:7px 11px;font-size:14px;overflow-wrap:anywhere}
-.chat-msg.me{align-self:flex-end;border-color:var(--accent);background:rgba(var(--rgb1),.14)}
-.chat-msg b{font-size:12px;display:block;margin-bottom:2px}
-.chat-msg i{font:11px var(--f-mono);color:var(--mute);font-style:normal;margin-left:8px}
-.chat-empty{margin:auto;text-align:center;color:var(--mute);font-size:14px;padding:12px}
-.chat-form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
-.chat-form input{flex:1;min-width:0;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit}
-.chat-msgline{min-height:18px;padding:0 14px 8px;font-size:12.5px;color:var(--bear)}
 
-.an-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
-.an-drop{border:2px dashed rgba(var(--rgb1),.5);border-radius:18px;min-height:240px;display:grid;place-items:center;text-align:center;padding:18px;cursor:pointer;background:rgba(var(--rgb1),.05);transition:border-color .2s,background .2s;position:relative;overflow:hidden}
-.an-drop:hover,.an-drop.drag{border-color:var(--accent);background:rgba(var(--rgb1),.12)}
-.an-drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.an-drop img{max-width:100%;max-height:340px;border-radius:12px;display:block}
-.an-drop .hint{color:var(--mute);font-size:15px;display:grid;gap:6px;justify-items:center}
-.an-drop .hint b{color:var(--fg);font-size:17px}
-.an-form{display:grid;gap:10px;margin-top:12px}
-.an-form .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.an-form input,.an-form select{min-width:0;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit}
-.an-res{min-height:240px}
-.an-res .empty{color:var(--mute);display:grid;place-items:center;text-align:center;min-height:200px;padding:12px}
-.an-badge{display:inline-flex;align-items:center;gap:8px;font:800 20px var(--f-display);padding:8px 16px;border-radius:999px}
-.an-badge.long{background:rgba(47,245,196,.16);color:var(--bull);border:1px solid var(--bull)}
-.an-badge.short{background:rgba(255,79,134,.16);color:var(--bear);border:1px solid var(--bear)}
-.an-badge.none{background:rgba(180,170,210,.14);color:var(--mute);border:1px solid var(--line)}
-.an-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
-.an-conf{font:700 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
-.an-lv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}
-.an-lv div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid}
-.an-lv span{font:600 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
-.an-lv b{font:700 20px var(--f-mono)}
-.an-lv .sl b{color:var(--bear)}.an-lv .tp b{color:var(--bull)}
-.an-list{margin:6px 0 0;padding-left:18px;display:grid;gap:5px;font-size:14.5px;color:var(--mute)}
-.an-res h4{margin:14px 0 2px;font:700 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-.an-err{color:var(--bear);font-size:14px;min-height:20px}
-.an-note{font-size:12.5px;color:var(--mute);margin-top:10px}
-.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-3px;margin-right:8px}
-@keyframes sp{to{transform:rotate(360deg)}}
-@media (max-width:860px){.an-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -427,7 +383,6 @@ details.dv[open] summary::before{content:"\25BE"}
     <a class="hide-sm" href="#inside">What's inside</a>
     <a class="hide-sm" href="#logic">How it signals</a>
     <a id="navProof" class="hide-sm" href="#proof" hidden>Results</a>
-    <a class="hide-sm" href="#analyst">AI Analyst</a>
     <a class="hide-sm" href="#compare">Compare</a>
     <a class="hide-sm" href="#learn">Learn</a>
     <a class="hide-sm" href="#faq">FAQ</a>
@@ -445,9 +400,9 @@ details.dv[open] summary::before{content:"\25BE"}
       <p class="lede">VenusAlgo reads market structure, order blocks, volume and momentum together, scores the setup out of nine, and draws a ready entry, stop loss and two take-profit levels. Switch off the detail whenever you want a clean chart.</p>
       <div class="cta-row">
         <a class="btn" href="#buy">Get VenusAlgo from $20</a>
-        <span class="price-tag">from <b>$20</b> USD · pay in BTC, ETH, SOL, BNB or USDT</span>
+        <span class="price-tag">from <b>$20</b> USD · pay in ETH or SOL</span>
       </div>
-      <div class="accept"><span>We accept</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-btc"/></svg>BTC</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-eth"/></svg>ETH</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-sol"/></svg>SOL</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-bnb"/></svg>BNB</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-usdt"/></svg>USDT</span></div>
+      <div class="accept"><span>We accept</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-eth"/></svg>ETH</span><span class="chip"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-sol"/></svg>SOL</span></div>
       <div class="facts">
         <span><b>2</b>display modes</span>
         <span><b>9</b>point score</span>
@@ -476,7 +431,7 @@ details.dv[open] summary::before{content:"\25BE"}
   <div class="wrap">
     <div class="sec-head rv"><div><div class="eyebrow">How buying works</div><h2>Three steps, no card needed.</h2></div><p>Pay in crypto, email your proof, receive your files. No account with a payment company, no card details.</p></div>
     <div class="steps3">
-      <div class="glass rv"><b class="n">1</b><h3>Pick a plan and coin</h3><p>Press Purchase, choose the Indicator or the Pro bundle, then pick BTC, ETH, SOL, BNB or USDT.</p></div>
+      <div class="glass rv"><b class="n">1</b><h3>Pick a plan and coin</h3><p>Press Purchase, choose the Indicator or the Pro bundle, then pick ETH or SOL.</p></div>
       <div class="glass rv"><b class="n">2</b><h3>Send the payment</h3><p>Send the exact amount to the address shown, on the network shown, then email your screenshot and TXID.</p></div>
       <div class="glass rv"><b class="n">3</b><h3>Get your files</h3><p>We check the payment on the blockchain and email your Pine Script files, usually within <b id="delHours">24</b> hours.</p></div>
     </div>
@@ -607,25 +562,6 @@ details.dv[open] summary::before{content:"\25BE"}
   </div>
 </section>
 
-<section id="analyst">
-  <div class="wrap">
-    <div class="sec-head rv"><div><div class="eyebrow">AI chart analyst</div><h2>Upload a chart. Get a trade plan.</h2></div><p>Add a screenshot of any market. The AI reads the structure, levels and trend and returns an entry, stop loss and two targets, or tells you to stay out when the chart is unclear.</p></div>
-    <div class="an-grid">
-      <div class="glass rv">
-        <label class="an-drop" id="anDrop" for="anFile"><input id="anFile" type="file" accept="image/*"><div class="hint" id="anHint"><b>Tap to add a chart screenshot</b><span>or drag a picture here. Include the price scale on the right side.</span></div></label>
-        <div class="an-form">
-          <div class="row"><input id="anSym" type="text" placeholder="Market, e.g. BTCUSD" autocomplete="off" aria-label="Market"><select id="anTf" aria-label="Timeframe"><option value="">Timeframe</option><option>1m</option><option>5m</option><option>15m</option><option>30m</option><option>1h</option><option>4h</option><option>1D</option></select></div>
-          <input id="anNote" type="text" maxlength="200" placeholder="Anything the AI should know? (optional)" autocomplete="off" aria-label="Note">
-          <button class="btn" type="button" id="anGo" disabled>Analyze chart</button>
-          <div class="an-err" id="anErr" role="status" aria-live="polite"></div>
-        </div>
-      </div>
-      <div class="glass an-res rv" id="anRes"><div class="empty">Your trade plan will appear here.</div></div>
-    </div>
-    <p class="an-note rv">AI analysis can be wrong. It is an educational idea, not financial advice, and no result is guaranteed. Always use the stop loss and never risk more than you can afford to lose.</p>
-  </div>
-</section>
-
 <section id="setup">
   <div class="wrap">
     <div class="sec-head rv"><div><div class="eyebrow">Setup guide</div><h2>On your chart in about two minutes.</h2></div><p>You receive plain text Pine Script files. They work in TradingView on web, desktop and the phone app (editing code is easiest on a computer or tablet).</p></div>
@@ -684,19 +620,11 @@ details.dv[open] summary::before{content:"\25BE"}
       <h3>Choose a payment method</h3>
       <div class="mgroup"><span class="mlabel">Coins</span>
         <div class="seg coins" role="group" aria-label="Coins">
-          <button type="button" id="cBTC" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-btc"/></svg>Bitcoin (BTC)</button>
           <button type="button" id="cETH" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-eth"/></svg>Ethereum (ETH)</button>
           <button type="button" id="cSOL" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-sol"/></svg>Solana (SOL)</button>
-          <button type="button" id="cBNB" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-bnb"/></svg>BNB Chain (BNB)</button>
         </div>
       </div>
-      <div class="mgroup"><span class="mlabel">Tether (USDT): pick the network</span>
-        <div class="seg coins" role="group" aria-label="Tether USDT networks">
-          <button type="button" id="cUSDTB" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-usdt"/></svg>USDT on BNB Smart Chain (BEP-20)</button>
-          <button type="button" id="cUSDTE" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-usdt"/></svg>USDT on Ethereum (ERC-20)</button>
-          <button type="button" id="cUSDTS" aria-pressed="false"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-usdt"/></svg>USDT on Solana</button>
-        </div>
-      </div>
+      
     </div>
 
     <p class="sponsor"><b>Don't want to pay with money?</b> You can still get access to our indicator by sponsoring it. Contact us on Instagram <a href="https://instagram.com/ForexVenus" target="_blank" rel="noopener">@ForexVenus</a>.</p>
@@ -784,14 +712,6 @@ details.dv[open] summary::before{content:"\25BE"}
 </div>
 
 <button id="setFab" class="set-fab" type="button" aria-expanded="false" aria-controls="setPanel" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
-<button id="chatFab" class="chat-fab" type="button" aria-expanded="false" aria-controls="chatPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/></svg>World chat</button>
-<div id="chatPanel" class="chat-panel" hidden role="dialog" aria-label="World chat">
-  <div class="ai-head"><div><b>World chat</b><span id="chatSub">Talk with other traders</span></div><button type="button" id="chatClose" aria-label="Close chat">&times;</button></div>
-  <p class="chat-note">Be kind. No links, wallet addresses or sales. Staff will never ask you for crypto here, so never send money to anyone in chat.</p>
-  <div class="chat-list" id="chatList" aria-live="polite"></div>
-  <div class="chat-msgline" id="chatErr" role="status"></div>
-  <form class="chat-form" id="chatForm"><input id="chatInput" type="text" maxlength="200" placeholder="Write a message" autocomplete="off" aria-label="Message"><button class="btn sm" type="submit">Send</button></form>
-</div>
 <div id="memberBadge" class="member-badge" hidden>Members: <b id="memberCount">0</b></div>
 <div id="setPanel" class="set-panel" hidden role="dialog" aria-label="Settings">
   <div class="ai-head"><div><b>Settings</b><span>Personalise this website</span></div><button type="button" id="setClose" aria-label="Close settings">&times;</button></div>
@@ -811,7 +731,7 @@ details.dv[open] summary::before{content:"\25BE"}
       <div id="devList" class="dev-list"></div>
       <p class="dev-cloud set-note" id="devCloudLine"></p>
       <details class="dv"><summary>Sales ledger</summary><div class="dv-body">
-        <div class="dv-grid"><select id="slCoin" aria-label="Coin"><option>BTC</option><option>ETH</option><option>SOL</option><option>BNB</option><option>USDT</option></select><input id="slUsd" type="number" inputmode="decimal" placeholder="USD amount" aria-label="USD amount"><input id="slWho" type="text" placeholder="Buyer email" aria-label="Buyer email"><input id="slTx" type="text" placeholder="TXID (optional)" aria-label="TXID"></div>
+        <div class="dv-grid"><select id="slCoin" aria-label="Coin"><option>ETH</option><option>SOL</option></select><input id="slUsd" type="number" inputmode="decimal" placeholder="USD amount" aria-label="USD amount"><input id="slWho" type="text" placeholder="Buyer email" aria-label="Buyer email"><input id="slTx" type="text" placeholder="TXID (optional)" aria-label="TXID"></div>
         <button class="btn sm" type="button" id="slAdd">Add sale</button>
         <div class="dev-stats"><div><b id="slTotal">$0</b><span>Revenue logged</span></div><div><b id="slN">0</b><span>Sales</span></div></div>
         <div id="slList" class="dev-list"></div>
@@ -820,7 +740,7 @@ details.dv[open] summary::before{content:"\25BE"}
       </div></details>
       <details class="dv"><summary>Crypto amount calculator</summary><div class="dv-body">
         <p class="set-note">Type today's prices. It works out the exact amount for each coin at the base price, ready to paste into CONFIG.fixed.</p>
-        <div class="dv-grid"><input id="pcBTC" type="number" inputmode="decimal" placeholder="BTC price" aria-label="BTC price"><input id="pcETH" type="number" inputmode="decimal" placeholder="ETH price" aria-label="ETH price"><input id="pcSOL" type="number" inputmode="decimal" placeholder="SOL price" aria-label="SOL price"><input id="pcBNB" type="number" inputmode="decimal" placeholder="BNB price" aria-label="BNB price"></div>
+        <div class="dv-grid"><input id="pcETH" type="number" inputmode="decimal" placeholder="ETH price" aria-label="ETH price"><input id="pcSOL" type="number" inputmode="decimal" placeholder="SOL price" aria-label="SOL price"></div>
         <div id="pcOut" class="dev-list"></div>
         <button class="btn ghost sm" type="button" id="pcCopy">Copy CONFIG.fixed code</button>
       </div></details>
@@ -900,22 +820,14 @@ var CONFIG = {
   plausibleDomain: '',                      // e.g. 'venusalgo.com' after you sign up at plausible.io (optional analytics)
   // Optional shared member counter (all devices). See the setup note: needs a free Firebase project with Firestore.
   cloud: { projectId: '', apiKey: '' },
-  // AI chart analyst: the address of your secure AI relay (see the setup notes). The AI key is NEVER put in this file.
-  analyzeEndpoint: '',
-  geminiKey: 'AQ.Ab8RN6JJ3Luq_eUarR8ezIw7FuCkt5B-k_USBvuYt1v8e-qYCw',
   // Optional: URL of a server that answers questions with a real AI model. Leave empty to use the built-in guide.
   aiEndpoint: '',
   // Fixed amounts for $20 USD. liveRates:false shows these exact amounts.
   // Set liveRates:true to convert the USD price from live market rates instead.
   liveRates: false,
   fixed: {
-    BTC: { amt: '0.000271', ref: 73690 },
     ETH: { amt: '0.00968',  ref: 2066 },
-    SOL: { amt: '0.241',    ref: 83 },
-    BNB: { amt: '0.0295',   ref: 678 },
-    USDTB: { amt: '20', ref: 1 },
-    USDTE: { amt: '20', ref: 1 },
-    USDTS: { amt: '20', ref: 1 }
+    SOL: { amt: '0.241',    ref: 83 }
   },
   // Add real, verified trade screenshots here. Use image files next to this page
   // or data: URIs. The Results section appears only when this list has items.
@@ -938,20 +850,10 @@ var CONFIG = {
 window.VENUS_PLAN = { id: 'indicator', name: 'Indicator', base: CONFIG.plans[0].price, disc: 0, code: '' };
 function VP(){ var p = window.VENUS_PLAN; return Math.round(p.base * (1 - p.disc / 100) * 100) / 100; }
 var WALLETS = {
-  BTC: { addr: 'bc1q8tpfy099la6v6tj05dhz8kkqa8twd94k755w4u', name: 'Bitcoin', dec: 8, cg: 'bitcoin', cb: 'BTC-USD',
-         net: 'the Bitcoin network', warn: 'Send Bitcoin (BTC) on the Bitcoin network only.' },
-  ETH: { addr: '0x3FFb0e2B7f9aB222c98c5eD98F1207EA0F050cbD', name: 'Ethereum', dec: 6, cg: 'ethereum', cb: 'ETH-USD',
+  ETH: { addr: '0x7cd2eE3bD48857eEE5a5d651FA331A2e06a1D5D7', name: 'Ethereum', dec: 6, cg: 'ethereum', cb: 'ETH-USD',
          net: 'Ethereum mainnet', warn: 'Send ETH on Ethereum mainnet only. Do not use BNB Chain, Base, Arbitrum or other networks.' },
-  SOL: { addr: '35YLHr2AfJ9a79mENVmC6Jv6qaUKtebDmwFBSeiRx5Qr', name: 'Solana', dec: 4, cg: 'solana', cb: 'SOL-USD',
-         net: 'Solana mainnet', warn: 'Send SOL on the Solana network only.' },
-  BNB: { addr: '0x3FFb0e2B7f9aB222c98c5eD98F1207EA0F050cbD', name: 'BNB Smart Chain', dec: 5, cg: 'binancecoin', cb: 'BNB-USD',
-         net: 'BNB Smart Chain (BEP-20)', warn: 'Send BNB on BNB Smart Chain (BEP-20) only. Do not send it on Ethereum or the old BNB Beacon Chain.' },
-  USDTB: { addr: '0x3FFb0e2B7f9aB222c98c5eD98F1207EA0F050cbD', name: 'USDT on BNB Smart Chain', sym: 'USDT', dec: 2, cg: 'tether', cb: 'USDT-USD',
-         net: 'BNB Smart Chain (BEP-20)', warn: 'Send USDT on BNB Smart Chain (BEP-20) only. Do not use TRC-20, ERC-20 or any other network.' },
-  USDTE: { addr: '0x3FFb0e2B7f9aB222c98c5eD98F1207EA0F050cbD', name: 'USDT on Ethereum', sym: 'USDT', dec: 2, cg: 'tether', cb: 'USDT-USD',
-         net: 'Ethereum (ERC-20)', warn: 'Send USDT on Ethereum (ERC-20) only. Network fees on Ethereum can be high, so BEP-20 is usually cheaper.' },
-  USDTS: { addr: '35YLHr2AfJ9a79mENVmC6Jv6qaUKtebDmwFBSeiRx5Qr', name: 'USDT on Solana', sym: 'USDT', dec: 2, cg: 'tether', cb: 'USDT-USD',
-         net: 'Solana (SPL)', warn: 'Send USDT on the Solana network only. Do not use TRC-20, ERC-20 or BEP-20.' }
+  SOL: { addr: 'EtD1EVT6f9yNtxigE1Ysaf8FK2xwLfd9JgX54oD7rXSM', name: 'Solana', dec: 4, cg: 'solana', cb: 'SOL-USD',
+         net: 'Solana mainnet', warn: 'Send SOL on the Solana network only.' }
 };
 
 /* ===================== CHART ILLUSTRATION ===================== */
@@ -1072,8 +974,8 @@ var WALLETS = {
 
 /* ===================== CHECKOUT ===================== */
 (function(){
-  var ORDER = ['BTC','ETH','SOL','BNB','USDTB','USDTE','USDTS'];
-  var coin = 'BTC', chosen = false, rates = {}, disputed = {}, fetchedAt = 0, manual = {}, timerId = null;
+  var ORDER = ['ETH','SOL'];
+  var coin = 'ETH', chosen = false, rates = {}, disputed = {}, fetchedAt = 0, manual = {}, timerId = null;
   var $ = function(id){ return document.getElementById(id); };
 
   function timeout(ms){ var c = new AbortController(); setTimeout(function(){ c.abort(); }, ms); return c.signal; }
@@ -1626,22 +1528,21 @@ var WALLETS = {
   });
 
   /* crypto amount calculator */
-  var DEC = { BTC: 6, ETH: 5, SOL: 3, BNB: 4 };
+  var DEC = { ETH: 5, SOL: 3 };
   function calc(){
     var out = {}, l = $('pcOut'); l.innerHTML = '';
-    ['BTC','ETH','SOL','BNB'].forEach(function(c){
+    ['ETH','SOL'].forEach(function(c){
       var p = parseFloat($('pc' + c).value);
       if (p > 0) { var f = Math.pow(10, DEC[c]); var amt = (Math.ceil(CONFIG.priceUSD / p * f - 1e-9) / f).toFixed(DEC[c]); out[c] = { amt: amt, ref: p }; row(l, c + ': ' + amt + ' (at $' + p + ')'); }
     });
     if (!Object.keys(out).length) row(l, 'Enter at least one price.');
     return out;
   }
-  ['BTC','ETH','SOL','BNB'].forEach(function(c){ $('pc' + c).value = CONFIG.fixed[c].ref; $('pc' + c).addEventListener('input', calc); });
+  ['ETH','SOL'].forEach(function(c){ $('pc' + c).value = CONFIG.fixed[c].ref; $('pc' + c).addEventListener('input', calc); });
   $('pcCopy').addEventListener('click', function(){
     var o = calc(), f = {};
-    ['BTC','ETH','SOL','BNB'].forEach(function(c){ f[c] = o[c] || CONFIG.fixed[c]; });
-    var parts = ['BTC','ETH','SOL','BNB'].map(function(c){ return c + ":{amt:'" + f[c].amt + "',ref:" + f[c].ref + '}'; });
-    parts.push("USDTB:{amt:'20',ref:1}", "USDTE:{amt:'20',ref:1}", "USDTS:{amt:'20',ref:1}");
+    ['ETH','SOL'].forEach(function(c){ f[c] = o[c] || CONFIG.fixed[c]; });
+    var parts = ['ETH','SOL'].map(function(c){ return c + ":{amt:'" + f[c].amt + "',ref:" + f[c].ref + '}'; });
     copy('fixed: { ' + parts.join(', ') + ' },', 'Copied. Paste it over the fixed: line in CONFIG.');
   });
   calc();
@@ -1663,9 +1564,9 @@ var WALLETS = {
   $('tAnnClear').addEventListener('click', function(){ if (window.VenusBanner) window.VenusBanner(''); });
   $('tWallets').addEventListener('click', function(){
     var l = $('tOut'); l.innerHTML = '';
-    var chk = { BTC: /^(bc1[a-z0-9]{25,62}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/, SOL: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/, EVM: /^0x[a-fA-F0-9]{40}$/ };
+    var chk = { SOL: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/, EVM: /^0x[a-fA-F0-9]{40}$/ };
     Object.keys(WALLETS).forEach(function(k){
-      var a = WALLETS[k].addr, kind = k === 'BTC' ? 'BTC' : (k === 'SOL' || k === 'USDTS') ? 'SOL' : 'EVM';
+      var a = WALLETS[k].addr, kind = k === 'SOL' ? 'SOL' : 'EVM';
       row(l, (chk[kind].test(a) ? 'OK   ' : 'BAD  ') + k + '  ' + a.slice(0, 8) + '...' + a.slice(-6));
     });
     row(l, 'Format check only. Always send a small test to confirm you control each wallet.');
@@ -1683,192 +1584,6 @@ var WALLETS = {
   if (!$('devOpen').hidden) refreshAll();
 })();
 
-/* ===================== WORLD CHAT (Firestore REST, polling) ===================== */
-(function(){
-  var $ = function(id){ return document.getElementById(id); };
-  var C = CONFIG.cloud || {}, on = !!(C.projectId && C.apiKey);
-  var base = on ? 'https://firestore.googleapis.com/v1/projects/' + encodeURIComponent(C.projectId) + '/databases/(default)/documents' : '';
-  var key = on ? '?key=' + encodeURIComponent(C.apiKey) : '';
-  var fab = $('chatFab'), panel = $('chatPanel'), list = $('chatList'), err = $('chatErr'), timer = null, lastSend = 0, sent = [], seen = null;
-  function closeOthers(){ var sp = $('setPanel'); if (sp && !sp.hidden) { sp.hidden = true; $('setFab').setAttribute('aria-expanded', 'false'); } var ap = $('aiPanel'); if (ap && !ap.hidden && $('aiFab')) { try { $('aiFab').click(); } catch(e){} } }
-  function colorFor(n){ var h = 0; for (var i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) % 360; return 'hsl(' + h + ',80%,70%)'; }
-  function ago(ms){ var s = Math.max(0, (Date.now() - ms) / 1000); if (s < 60) return 'now'; if (s < 3600) return Math.floor(s / 60) + 'm'; if (s < 86400) return Math.floor(s / 3600) + 'h'; return Math.floor(s / 86400) + 'd'; }
-  function empty(t){ list.innerHTML = ''; var d = document.createElement('div'); d.className = 'chat-empty'; d.textContent = t; list.appendChild(d); }
-  function render(msgs){
-    var sig = msgs.map(function(m){ return m.name + m.text + m.ts; }).join('|');
-    if (sig === seen) return; seen = sig;
-    var me = window.VenusAuth && window.VenusAuth.current(), nearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 80;
-    list.innerHTML = '';
-    if (!msgs.length) { empty('No messages yet. Say hello!'); return; }
-    msgs.forEach(function(m){
-      var d = document.createElement('div'); d.className = 'chat-msg' + (me && me.username === m.name ? ' me' : '');
-      var b = document.createElement('b'); b.textContent = m.name; b.style.color = colorFor(m.name);
-      var t = document.createElement('i'); t.textContent = ago(m.ts); b.appendChild(t);
-      var p = document.createElement('span'); p.textContent = m.text; d.appendChild(b); d.appendChild(p); list.appendChild(d);
-    });
-    if (nearBottom || msgs.length) list.scrollTop = list.scrollHeight;
-  }
-  function fetchMsgs(){
-    if (!on) return;
-    fetch(base + ':runQuery' + key, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ structuredQuery: { from: [{ collectionId: 'messages' }], orderBy: [{ field: { fieldPath: 'ts' }, direction: 'DESCENDING' }], limit: 60 } }) })
-      .then(function(r){ if (!r.ok) throw new Error('x'); return r.json(); })
-      .then(function(rows){
-        var out = [];
-        rows.forEach(function(r){ var f = r.document && r.document.fields; if (!f) return; out.push({ name: String(f.name && f.name.stringValue || '?').slice(0, 24), text: String(f.text && f.text.stringValue || '').slice(0, 200), ts: Date.parse(f.ts && f.ts.timestampValue) || 0 }); });
-        out.reverse(); err.textContent = ''; render(out);
-      }).catch(function(){ if (seen === null) empty('Chat could not connect right now. Try again soon.'); });
-  }
-  function start(){ fetchMsgs(); clearInterval(timer); timer = setInterval(function(){ if (!document.hidden) fetchMsgs(); }, 4000); }
-  function stop(){ clearInterval(timer); timer = null; }
-  function open(v){
-    panel.hidden = !v; fab.setAttribute('aria-expanded', v ? 'true' : 'false');
-    if (!v) { stop(); return; }
-    closeOthers();
-    if (!on) { empty('World chat is not switched on yet. The owner needs to connect the chat database.'); $('chatForm').hidden = true; if (CONFIG.discord) { var a = document.createElement('a'); a.className = 'btn sm'; a.href = CONFIG.discord; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Join our Discord chat'; a.style.marginTop = '12px'; list.firstChild.appendChild(document.createElement('br')); list.firstChild.appendChild(a); } return; }
-    seen = null; empty('Loading...'); start();
-  }
-  fab.addEventListener('click', function(){ open(panel.hidden); });
-  $('chatClose').addEventListener('click', function(){ open(false); });
-
-  var BAD = /https?:|www\.|\.(com|net|org|io|me|xyz|ru|cc|to|ly|gg)\b|t\.me|@[a-z0-9_]{3,}|0x[a-f0-9]{8,}|\bbc1[a-z0-9]{10,}|[1-9A-HJ-NP-Za-km-z]{32,}/i;
-  $('chatForm').addEventListener('submit', function(ev){
-    ev.preventDefault();
-    var input = $('chatInput'), text = input.value.replace(/\s+/g, ' ').trim();
-    if (!text) return;
-    var me = window.VenusAuth && window.VenusAuth.current();
-    if (!me) { err.textContent = 'Sign in to chat.'; if (window.VenusAuth) window.VenusAuth.require(function(){ err.textContent = ''; }); return; }
-    if (BAD.test(text)) { err.textContent = 'Links, @handles and wallet addresses are not allowed in chat.'; return; }
-    var now = Date.now(); sent = sent.filter(function(x){ return now - x < 60000; });
-    if (now - lastSend < 3000) { err.textContent = 'Slow down a little.'; return; }
-    if (sent.length >= 12) { err.textContent = 'Too many messages. Wait a minute.'; return; }
-    lastSend = now; sent.push(now); err.textContent = ''; input.value = '';
-    fetch(base + '/messages' + key, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields: { name: { stringValue: me.username.slice(0, 24) }, text: { stringValue: text.slice(0, 200) }, ts: { timestampValue: new Date().toISOString() } } }) })
-      .then(function(r){ if (!r.ok) throw new Error('x'); fetchMsgs(); })
-      .catch(function(){ err.textContent = 'Message not sent. Check your connection.'; input.value = text; });
-  });
-  var sf = $('setFab'); if (sf) sf.addEventListener('click', function(){ if (!panel.hidden) open(false); }, true);
-  document.addEventListener('visibilitychange', function(){ if (!document.hidden && !panel.hidden && on) fetchMsgs(); });
-})();
-
-/* ===================== AI CHART ANALYST ===================== */
-(function(){
-  var $ = function(id){ return document.getElementById(id); };
-  var img = null, busy = false, KEY = 'venusalgo_an_times';
-  function esc(t){ var d = document.createElement('div'); d.textContent = t == null ? '' : String(t); return d.innerHTML; }
-  function setErr(t){ $('anErr').textContent = t || ''; }
-  function fmt(n){ if (n == null || isNaN(n)) return '-'; var a = Math.abs(n); return Number(n).toLocaleString('en-US', { maximumFractionDigits: a >= 100 ? 2 : a >= 1 ? 4 : 6 }); }
-
-  function load(file){
-    setErr('');
-    if (!file || !/^image\//.test(file.type)) { setErr('Please choose a picture file.'); return; }
-    var fr = new FileReader();
-    fr.onload = function(){
-      var im = new Image();
-      im.onload = function(){
-        var max = 1600, sc = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
-        c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc);
-        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
-        var url = c.toDataURL('image/jpeg', .85);
-        if (url.length > 5200000) { url = c.toDataURL('image/jpeg', .6); }
-        img = url.split(',')[1];
-        var p = document.createElement('img'); p.src = url; p.alt = 'Your chart screenshot';
-        var d = $('anDrop'); var h = $('anHint'); if (h) h.style.display = 'none';
-        var old = d.querySelector('img'); if (old) old.remove(); d.appendChild(p);
-        $('anGo').disabled = !(CONFIG.analyzeEndpoint||CONFIG.geminiKey);
-        if (!CONFIG.analyzeEndpoint&&!CONFIG.geminiKey) setErr('The AI analyst is not switched on yet.');
-      };
-      im.onerror = function(){ setErr('That picture could not be read. Try a different screenshot.'); };
-      im.src = fr.result;
-    };
-    fr.readAsDataURL(file);
-  }
-  $('anFile').addEventListener('change', function(){ load(this.files && this.files[0]); });
-  var drop = $('anDrop');
-  ['dragenter','dragover'].forEach(function(e){ drop.addEventListener(e, function(ev){ ev.preventDefault(); drop.classList.add('drag'); }); });
-  ['dragleave','drop'].forEach(function(e){ drop.addEventListener(e, function(ev){ ev.preventDefault(); drop.classList.remove('drag'); }); });
-  drop.addEventListener('drop', function(ev){ var f = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0]; if (f) load(f); });
-
-  if (!CONFIG.analyzeEndpoint&&!CONFIG.geminiKey) { $('anRes').innerHTML = '<div class="empty">The AI analyst is being set up. Please check back soon.</div>'; }
-
-  function underLimit(){
-    var now = Date.now(), t = [];
-    try { t = (JSON.parse(localStorage.getItem(KEY)) || []).filter(function(x){ return now - x < 3600000; }); } catch(e){}
-    if (t.length >= 8) return false;
-    t.push(now); try { localStorage.setItem(KEY, JSON.stringify(t)); } catch(e){}
-    return true;
-  }
-  function list(arr){ if (!arr || !arr.length) return ''; return '<ul class="an-list">' + arr.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; }
-  function render(r){
-    var v = r.verdict, cls = v === 'LONG' ? 'long' : v === 'SHORT' ? 'short' : 'none', label = v === 'LONG' ? 'LONG' : v === 'SHORT' ? 'SHORT' : 'NO TRADE';
-    var h = '<div class="an-top"><span class="an-badge ' + cls + '">' + label + '</span><span class="an-conf">' + esc(r.confidence || '') + ' confidence</span></div>';
-    if (r.symbol || r.price_now) h += '<div class="an-conf">' + esc(r.symbol || '') + (r.price_now ? ' · price read ' + esc(fmt(r.price_now)) : '') + '</div>';
-    if (v === 'LONG' || v === 'SHORT') {
-      h += '<div class="an-lv"><div><span>Entry (' + esc((r.order_type || 'MARKET').toLowerCase()) + ')</span><b>' + esc(fmt(r.entry)) + '</b></div><div class="sl"><span>Stop loss</span><b>' + esc(fmt(r.stop_loss)) + '</b></div><div class="tp"><span>Take profit 1</span><b>' + esc(fmt(r.tp1)) + '</b></div><div class="tp"><span>Take profit 2</span><b>' + esc(fmt(r.tp2)) + '</b></div></div>';
-      h += '<div class="an-conf">Reward : risk  ' + esc(r.rr1) + 'R  /  ' + esc(r.rr2) + 'R</div>';
-    }
-    if (r.reasoning && r.reasoning.length) h += '<h4>Why</h4>' + list(r.reasoning);
-    if (r.invalidation) h += '<h4>Idea is wrong if</h4><p style="margin:4px 0 0;font-size:14.5px;color:var(--mute)">' + esc(r.invalidation) + '</p>';
-    if (r.warnings && r.warnings.length) h += '<h4>Watch out</h4>' + list(r.warnings);
-    if (v === 'LONG' || v === 'SHORT') h += '<button class="btn ghost sm" type="button" id="anCopy" style="margin-top:14px;width:100%">Copy trade plan</button>';
-    $('anRes').innerHTML = h;
-    var cp = $('anCopy');
-    if (cp) cp.addEventListener('click', function(){
-      var t = (r.symbol || 'Trade') + ' ' + v + '\nEntry ' + fmt(r.entry) + ' (' + (r.order_type || 'MARKET').toLowerCase() + ')\nSL ' + fmt(r.stop_loss) + '\nTP1 ' + fmt(r.tp1) + '\nTP2 ' + fmt(r.tp2);
-      var b = this; function ok(){ b.textContent = 'Copied!'; setTimeout(function(){ b.textContent = 'Copy trade plan'; }, 1800); }
-      try { navigator.clipboard.writeText(t).then(ok, function(){}); } catch(e){}
-    });
-  }
-
-  var PROMPT = 'You are a careful crypto/forex chart analyst using Smart Money Concepts (market structure, BOS/CHoCH, order blocks, fair value gaps, liquidity sweeps, premium/discount). Read the attached chart screenshot. Use ONLY prices you can read from the right-hand price scale and candles. Never invent numbers. Rules: If the chart is unclear, the price scale is unreadable, structure is choppy, or no setup has at least 1.5R to TP1, answer verdict NO_TRADE and explain. Stop loss goes beyond a real structural level (swing or order block). LONG: stop_loss < entry < tp1 < tp2. SHORT: stop_loss > entry > tp1 > tp2. price_now is the current price you read. Use LIMIT only if entry is a retest level away from price_now, otherwise MARKET. Give 3-4 short reasoning bullets, one invalidation sentence, and any warnings. Be conservative: skipping a trade is better than forcing one.';
-  var SCHEMA = { type: 'OBJECT', properties: { verdict: { type: 'STRING', enum: ['LONG','SHORT','NO_TRADE'] }, confidence: { type: 'STRING', enum: ['low','medium','high'] }, symbol: { type: 'STRING' }, price_now: { type: 'NUMBER' }, order_type: { type: 'STRING', enum: ['MARKET','LIMIT'] }, entry: { type: 'NUMBER' }, stop_loss: { type: 'NUMBER' }, tp1: { type: 'NUMBER' }, tp2: { type: 'NUMBER' }, reasoning: { type: 'ARRAY', items: { type: 'STRING' } }, invalidation: { type: 'STRING' }, warnings: { type: 'ARRAY', items: { type: 'STRING' } } }, required: ['verdict','confidence','reasoning'] };
-  function validate(r){
-    var n = function(x){ return typeof x === 'number' && isFinite(x) && x > 0; };
-    if (r.verdict !== 'LONG' && r.verdict !== 'SHORT') { r.verdict = 'NO_TRADE'; return r; }
-    var e = r.entry, sl = r.stop_loss, a = r.tp1, b = r.tp2, lg = r.verdict === 'LONG';
-    var ok = n(e) && n(sl) && n(a) && n(b) && (lg ? sl < e && e < a && a < b : sl > e && e > a && a > b);
-    if (!ok) return { verdict: 'NO_TRADE', confidence: 'low', symbol: r.symbol, reasoning: ['The levels read from the chart did not add up to a valid trade, so it was rejected.'], warnings: ['Try a clearer screenshot with the price scale visible.'] };
-    var risk = Math.abs(e - sl), r1 = Math.abs(a - e) / risk, r2 = Math.abs(b - e) / risk;
-    if (r1 < 1.2) return { verdict: 'NO_TRADE', confidence: 'low', symbol: r.symbol, reasoning: ['Reward to risk was too small to be worth taking.'], warnings: [] };
-    if (n(r.price_now) && Math.abs(e - r.price_now) / r.price_now > 0.05) r.warnings = (r.warnings || []).concat(['Entry is far from the current price. Check it carefully.']);
-    r.rr1 = +r1.toFixed(2); r.rr2 = +r2.toFixed(2); r.order_type = r.order_type || 'MARKET';
-    return r;
-  }
-  function direct(ctl){
-    var ctx = 'Market: ' + ($('anSym').value.trim().slice(0,20) || 'unknown') + '. Timeframe: ' + ($('anTf').value || 'unknown') + '. User note: ' + ($('anNote').value.trim().slice(0,200) || 'none');
-    var models = ['gemini-2.5-flash','gemini-2.0-flash'], last = 'The analyst is busy. Try again.';
-    var body = JSON.stringify({ contents: [{ parts: [{ text: PROMPT + '\n' + ctx }, { inline_data: { mime_type: 'image/jpeg', data: img } }] }], generationConfig: { temperature: 0.2, responseMimeType: 'application/json', responseSchema: SCHEMA } });
-    function call(i, bearer){
-      var h = { 'Content-Type': 'application/json' };
-      if (bearer) h['Authorization'] = 'Bearer ' + CONFIG.geminiKey; else h['x-goog-api-key'] = CONFIG.geminiKey;
-      return fetch('https://generativelanguage.googleapis.com/v1beta/models/' + models[i] + ':generateContent', { method: 'POST', signal: ctl.signal, headers: h, body: body });
-    }
-    function go(i){
-      if (i >= models.length) return Promise.reject(new Error(last));
-      return call(i, false).then(function(r){ return (r.status === 401 && i === 0) ? call(i, true) : r; })
-        .then(function(r){ if (!r.ok) { last = (r.status === 401 || r.status === 403) ? 'The AI key was rejected (' + r.status + ').' : 'AI error ' + r.status + '. Try again.'; return go(i + 1); }
-          return r.json().then(function(j){ var t = j.candidates && j.candidates[0] && j.candidates[0].content.parts.map(function(p){ return p.text || ''; }).join(''); if (!t) return go(i + 1); return validate(JSON.parse(t)); }); });
-    }
-    return go(0);
-  }
-  function run(){
-    if (busy || !img) return;
-    if (!CONFIG.analyzeEndpoint&&!CONFIG.geminiKey) { setErr('The AI analyst is not switched on yet.'); return; }
-    if (!underLimit()) { setErr('You have reached the hourly limit. Please try again later.'); return; }
-    busy = true; setErr(''); var b = $('anGo'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Analyzing...';
-    $('anRes').innerHTML = '<div class="empty"><div><span class="spin"></span>Reading the chart. This can take up to a minute.</div></div>';
-    var ctl = new AbortController(), tm = setTimeout(function(){ ctl.abort(); }, 70000);
-    (CONFIG.analyzeEndpoint ? fetch(CONFIG.analyzeEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctl.signal, body: JSON.stringify({ image: img, mime: 'image/jpeg', symbol: $('anSym').value.trim().slice(0, 20), timeframe: $('anTf').value, note: $('anNote').value.trim().slice(0, 200) }) })
-      .then(function(r){ return r.json().catch(function(){ return { error: 'Bad reply from the analyst.' }; }).then(function(j){ if (!r.ok) throw new Error(j && j.error || 'The analyst is busy. Try again.'); return j; }); }) : direct(ctl))
-      .then(render)
-      .catch(function(e){ $('anRes').innerHTML = '<div class="empty">No result.</div>'; setErr(e.name === 'AbortError' ? 'That took too long. Try again.' : (e.message || 'Something went wrong. Try again.')); })
-      .then(function(){ clearTimeout(tm); busy = false; b.disabled = false; b.textContent = 'Analyze chart'; });
-  }
-  $('anGo').addEventListener('click', function(){
-    if (window.VenusAuth) window.VenusAuth.require(run); else run();
-  });
-  window.addEventListener('venus-users', function(){ if (!document.getElementById('anFile')) return; });
-})();
-
 /* ===================== VENUS ASSISTANT ===================== */
 (function(){
   var $ = function(id){ return document.getElementById(id); };
@@ -1878,17 +1593,17 @@ var WALLETS = {
   var CHECKOUT = [{ l: 'Go to checkout', f: 'checkout' }];
   function amounts(){
     var f = CONFIG.fixed;
-    return 'Bitcoin ' + f.BTC.amt + ' BTC, Ethereum ' + f.ETH.amt + ' ETH, Solana ' + f.SOL.amt + ' SOL, BNB ' + f.BNB.amt + ' BNB, or ' + f.USDTB.amt + ' USDT.';
+    return 'Ethereum ' + f.ETH.amt + ' ETH or Solana ' + f.SOL.amt + ' SOL.';
   }
   var FALLBACK = "I can help with buying, payment methods and networks, what the indicator includes, and how to reach support. For anything else, please contact us.";
   var KB = [
     { k: ['hi','hello','hey','namaste','help'], a: "Hi, I'm the Venus assistant. I can guide you through buying, payment methods and networks, and what the indicator does. What would you like to know?" },
-    { k: ['how to buy','buy','purchase','order','checkout','how do i pay','how to pay','get it','start'], a: function(){ return "Here is how to buy:\n1. Press Purchase in the Checkout section.\n2. Choose a payment method (and the network for USDT).\n3. Send the amount shown to the address shown.\n4. Email proof of payment to " + email + ": a screenshot of the transaction and the transaction ID (TXID).\n5. Once the payment is confirmed on the blockchain, your indicator file is delivered."; }, acts: CHECKOUT },
+    { k: ['how to buy','buy','purchase','order','checkout','how do i pay','how to pay','get it','start'], a: function(){ return "Here is how to buy:\n1. Press Purchase in the Checkout section.\n2. Choose ETH or SOL.\n3. Send the amount shown to the address shown.\n4. Email proof of payment to " + email + ": a screenshot of the transaction and the transaction ID (TXID).\n5. Once the payment is confirmed on the blockchain, your indicator file is delivered."; }, acts: CHECKOUT },
     { k: ['price','cost','how much','usd','$20','$35','20 dollars','amount','amounts','bundle','pro','plan'], a: function(){ return 'There are two plans: the Indicator for $20 and the Pro bundle for $35 (indicator, backtestable strategy and the Venus Momentum companion). Press Purchase, pick a plan, then choose a coin. Referral codes work in the box above the Purchase button.'; }, acts: CHECKOUT },
-    { k: ['payment method','payment methods','methods','accept','crypto','which coin','bitcoin','btc','ethereum','eth','solana','sol','bnb','usdt','tether'], a: "You can pay with Bitcoin, Ethereum, Solana, BNB, or Tether (USDT) on BNB Smart Chain, Ethereum or Solana. Press Purchase, then pick one. You can also get access by sponsoring the project: contact us on Instagram @" + ig + ".", acts: CHECKOUT },
+    { k: ['payment method','payment methods','methods','accept','crypto','which coin','ethereum','eth','solana','sol'], a: "You can pay with Ethereum (ETH) or Solana (SOL). Press Purchase, then pick one. You can also get access by sponsoring the project: contact us on Instagram @" + ig + "." + ig + ".", acts: CHECKOUT },
     { k: ['paypal','card','upi','bank','cash','credit','debit','other payment','another payment','different payment'], a: "We take crypto. If you need a different payment method, email " + email + " and we will see what we can arrange.", acts: CONTACT },
-    { k: ['fee','fees','gas','cheapest','cheap','low cost','expensive'], a: "Network fees come from the blockchain, not from us. USDT on BNB Smart Chain (BEP-20) and Solana are usually the cheapest, and Ethereum is often the most expensive. Check the fee in your wallet before you send." },
-    { k: ['network','trc','trc20','trc-20','erc','erc20','bep','bep20','wrong network','chain','address'], a: "Pick the same network in your wallet as the one you chose on the page. Ethereum, BNB Chain and USDT on those chains share the same 0x address, so the network matters. Do not send on any other network (for example TRC-20), because funds can be lost. We do not accept TRC-20." },
+    { k: ['fee','fees','gas','cheapest','cheap','low cost','expensive'], a: "Network fees come from the blockchain, not from us. Solana is usually much cheaper than Ethereum. Check the fee in your wallet before you send." },
+    { k: ['network','wrong network','chain','address'], a: "Send ETH on Ethereum mainnet and SOL on the Solana network only. Sending on any other network can lose your funds." },
     { k: ['proof','txid','transaction id','screenshot','hash','receipt','paid','i paid','sent'], a: function(){ return "After you send the payment, email " + email + " with a screenshot of the transaction and the transaction ID (TXID). We check it on the blockchain and then send your indicator file."; }, acts: CONTACT },
     { k: ['deliver','delivery','receive','download','when will','how long','file','access','send me','not received'], a: function(){ return "Your indicator file is sent after we confirm your payment on the blockchain. If you have sent proof and have not heard back, contact " + email + " or message @" + ig + " on Instagram."; }, acts: CONTACT },
     { k: ['feature','features','include','included','what do i get','inside','layers','order block','volume profile','smc','bos','choch','what is'], a: "VenusAlgo combines market structure with BOS and CHoCH, order blocks, fair value gaps, liquidity sweeps, premium and discount, volume profile and heatmap, estimated order flow with buyers vs sellers, EMA, SMA, Bollinger Bands, RSI, MACD and ATR. It then gives an entry, stop loss and two take-profit levels. Every layer has its own on/off switch." },
@@ -1899,8 +1614,6 @@ var WALLETS = {
     { k: ['refund','return','cancel','chargeback','money back'], a: "Crypto payments are final and cannot be reversed. If something went wrong with your order, contact us and we will look into it.", acts: CONTACT },
     { k: ['sponsor','sponsorship','free','without paying','no money','dont want to pay','discount','offer'], a: "If you don't want to pay with money, you can still get access to our indicator by sponsoring it. Contact us on Instagram @" + ig + ".", acts: [{ l: 'Instagram @' + ig, url: 'https://instagram.com/' + ig }] },
     { k: ['contact','support','talk','human','owner','email','instagram'], a: "You can reach us by email at " + email + " or on Instagram @" + ig + ".", acts: CONTACT },
-    { k: ['ai analyst','analyze','analyse','screenshot','chart analysis','upload','photo','ai trade','entry sl tp'], a: function(){ return 'Use the AI Analyst section: upload a chart screenshot (with the price scale visible), pick the timeframe, and tap Analyze. It returns an entry, stop loss and two targets, or NO TRADE when the chart is unclear. It can be wrong, so always use the stop loss.'; } },
-    { k: ['chat','community','talk','forum','discord','telegram','people'], a: function(){ return 'Tap World chat at the bottom left to talk with other traders. You need to be signed in. Links, wallet addresses and sales are not allowed, and we will never ask you for crypto in chat.'; } },
     { k: ['sign in','signin','login','log in','register','account','password','sign up','signup','username'], a: function(){ return "Tap Sign in at the top. Sign up with your email, a username and a password, and you stay signed in on this device. Log in later with your email or username. Forgot your password? Email " + email + "."; } },
     { k: ['tradingview','pine','compatible','plan','free plan','mobile','app','requirement','requirements'], a: "VenusAlgo is a Pine Script indicator for TradingView. You need a TradingView account, and some TradingView plans limit how many indicators you can use on one chart, so check your plan." },
     { k: ['results','screenshots','backtest','performance','winning','proof of profit'], a: "The Results section shows chart screenshots of the indicator in use. They are selected examples of signals and trade boxes, not a record of profit and loss. Past results do not predict future results." },
